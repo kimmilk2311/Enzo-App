@@ -1,0 +1,41 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.example.admin_panel_app_web"
+    compileSdkVersion 34 // Thay bằng phiên bản SDK Android mà bạn đã cài đặt (ví dụ: 34 hoặc 33)
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    defaultConfig {
+        applicationId "com.example.admin_panel_app_web"
+        minSdkVersion 21 // Đảm bảo minSdkVersion tương thích với các plugin Flutter bạn sử dụng
+        targetSdkVersion 34 // Thay bằng phiên bản SDK Android mà bạn đã cài đặt (ví dụ: 34 hoặc 33)
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
