@@ -1,4 +1,3 @@
-// Import the express module
 const express = require('express');
 const mongoose = require('mongoose'); 
 const authRouter = require('./routers/auth');
@@ -11,7 +10,7 @@ const VendorRouter = require('./routers/vendor');
 const orderRouter = require('./routers/order');
 const cors = require('cors');
 // Define the port number the server will listen on
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Create an instance of an express application
 const app = express();

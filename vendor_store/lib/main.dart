@@ -21,17 +21,22 @@ class MyApp extends ConsumerWidget {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? token = preferences.getString('auth_token');
       String? vendorJson = preferences.getString('vendor');
+      String? vendorId = preferences.getString('vendorId');
 
       print("Token từ SharedPreferences: $token");
       print("Vendor JSON từ SharedPreferences: $vendorJson");
+      print("Vendor ID từ SharedPreferences: $vendorId");
 
-      if (token != null && vendorJson != null) {
+      if (token != null && vendorJson != null && vendorId != null) {
         ref.read(vendorProvider.notifier).setVendor(vendorJson);
         print("Vendor sau khi thiết lập: ${ref.read(vendorProvider)}");
       } else {
         ref.read(vendorProvider.notifier).signOut();
       }
     }
+
+
+
 
     return MaterialApp(
       title: 'Flutter Demo',

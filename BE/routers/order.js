@@ -58,7 +58,7 @@ try{
 });
 
 // Nhận tuyến đường để lấy ID người bán hàng
-orderRouter.get('/api/orders/vendors/:vendorId',vendorAuth, async(req,res)=>{
+orderRouter.get('/api/orders/:vendorId',vendorAuth, async(req,res)=>{
   try{
     const {vendorId} =req.params;
     const orders = await Order.find({vendorId});

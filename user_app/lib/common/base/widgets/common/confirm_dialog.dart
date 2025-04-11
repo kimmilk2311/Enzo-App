@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+  import 'package:flutter/material.dart';
 import '../../../../resource/theme/app_colors.dart';
 import '../../../../resource/theme/app_style.dart';
 import 'app_button.dart';
@@ -42,7 +42,7 @@ class ConfirmDialog extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 color: AppColors.greyLight,
-                textColor: AppColors.blackFont,
+                textColor: AppColors.white,
                 width: 100,
                 height: 40,
                 fontSize: 14,

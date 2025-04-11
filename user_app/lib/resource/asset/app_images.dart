@@ -21,6 +21,11 @@ class AppImages {
   static const icCartWhite = '${assetsIcon}cart_white.svg';
   static const icMessWhite = '${assetsIcon}message_white.svg';
   static const icDelete = '${assetsIcon}delete.svg';
+  static const icHelp = '${assetsIcon}help.svg';
+  static const icTracking = '${assetsIcon}tracking.svg';
+  static const icHistory = '${assetsIcon}history.svg';
+  static const icLogout = '${assetsIcon}logout.svg';
+
 
   static const imgSearchBanner = '${assetsImage}searchBanner.jpeg';
   static const imgProfile = '${assetsImage}profile.png';
@@ -31,4 +36,10 @@ class AppImages {
   static const imgBank = '${assetsImage}bank.png';
   static const imgMomo = '${assetsImage}momo.png';
   static const imgCOD = '${assetsImage}cod.png';
+  static const imgBrProfile = '${assetsImage}br_profile.png';
+  static const imgComplete = '${assetsImage}complete.png';
+  static const imgCart = '${assetsImage}cart.png';
+  static const imgDone = '${assetsImage}done.png';
+  static const imgFavorite = '${assetsImage}favorite.png';
+  static const imgDefaultAvatar = '${assetsImage}default_avatar.png';
 }

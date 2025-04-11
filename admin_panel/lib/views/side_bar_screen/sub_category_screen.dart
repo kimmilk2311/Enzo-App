@@ -4,7 +4,6 @@ import 'package:admin_panel_app_web/views/side_bar_screen/widgets/subcategory_wi
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../models/category.dart';
-import '../../services/manage_http_response.dart';
 
 class SubCategoryScreen extends StatefulWidget {
   static const String id = 'subcategoryScreen';
@@ -55,7 +54,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             children: [
               const SizedBox(height: 10),
               const Text(
-                "SubCategory",
+                "Tải danh mục con",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 28,
@@ -79,7 +78,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                         width: 350, // Thu hẹp dropdown
                         child: DropdownButtonFormField<Category>(
                           decoration: const InputDecoration(
-                            labelText: "Select Category",
+                            labelText: "Nhập danh mục con",
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           ),
@@ -106,9 +105,9 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                 width: 350,
                 child: TextFormField(
                   onChanged: (value) => name = value,
-                  validator: (value) => value!.isNotEmpty ? null : "Please enter Subcategory name",
+                  validator: (value) => value!.isNotEmpty ? null : "Nhập danh mục con",
                   decoration: const InputDecoration(
-                    labelText: "Enter Subcategory Name",
+                    labelText: "Nhập danh mục con",
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
@@ -127,7 +126,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                     ),
                     child: _image != null
                         ? Image.memory(_image, fit: BoxFit.cover)
-                        : const Center(child: Text("Image", textAlign: TextAlign.center)),
+                        : const Center(child: Text("Hình ảnh", textAlign: TextAlign.center)),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton.icon(
@@ -139,7 +138,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                     ),
                     onPressed: pickImage,
                     icon: const Icon(Icons.upload, size: 14, color: Colors.purple),
-                    label: const Text("Upload Image", style: TextStyle(fontSize: 12, color: Colors.purple)),
+                    label: const Text("Chọn ảnh", style: TextStyle(fontSize: 12, color: Colors.purple)),
                   ),
                 ],
               ),
@@ -166,12 +165,12 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                    });
                     }
                   },
-                  child: const Text("Save", style: TextStyle(color: Colors.white, fontSize: 14)),
+                  child: const Text("Lưu", style: TextStyle(color: Colors.white, fontSize: 14)),
                 ),
               ),
               const Divider(color: Colors.grey,),
           
-              SubcategoryWidget(),
+          const    SubcategoryWidget(),
             ],
           ),
         ),

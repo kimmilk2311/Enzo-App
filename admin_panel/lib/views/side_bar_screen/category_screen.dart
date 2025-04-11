@@ -55,7 +55,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
-                  "Category",
+                  "Thêm danh mục hàng",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 36,
@@ -80,10 +80,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     child: Center(
                       child: _image != null
                           ? Image.memory(_image)
-                          : const Text("Category Image"),
+                          : const Text("Hình ảnh"),
                     ),
                   ),
-                  const SizedBox(width: 8), // Khoảng cách giữa các widget
+                  const SizedBox(width: 8),
                   Expanded(
                     child: TextFormField(
                       onChanged: (value) {
@@ -92,10 +92,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       validator: (value) {
                         return value!.isNotEmpty
                             ? null
-                            : "Please enter category name";
+                            : "Nhập danh mục hàng";
                       },
                       decoration: const InputDecoration(
-                          labelText: "Enter Category Name"),
+                          labelText: "Nhập danh mục hàng"),
                     ),
                   ),
                   TextButton(
@@ -104,7 +104,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         print(name);
                       }
                     },
-                    child: const Text("Cancel"),
+                    child: const Text("Hủy"),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -124,7 +124,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       }
                     },
                     child: const Text(
-                      "Save",
+                      "Lưu",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -136,7 +136,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               // Pick Image Button
               ElevatedButton(
                 onPressed: pickImage,
-                child: const Text("Pick Image"),
+                child: const Text("Chọn ảnh"),
               ),
               const Divider(color: Colors.grey),
 
@@ -153,13 +153,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     child: Center(
                       child: _bannerImage != null
                           ? Image.memory(_bannerImage)
-                          : const Text("Category Banner"),
+                          : const Text("Chọn banner ảnh"),
                     ),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: pickBannerImage,
-                    child: const Text("Pick Banner Image"),
+                    child: const Text("Chọn ảnh"),
                   ),
                 ],
               ),
@@ -167,8 +167,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
               const Divider(color: Colors.grey),
 
               // Category List
-              SizedBox(
-                height: 500, // Đặt chiều cao cố định để tránh overflow
+            const  SizedBox(
+                height: 500,
                 child: CategoryWidget(),
               ),
             ],

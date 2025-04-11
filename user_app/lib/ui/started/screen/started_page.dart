@@ -8,6 +8,9 @@ import 'package:multi_store/resource/theme/app_style.dart';
 import 'package:multi_store/routes/app_routes.dart';
 import 'package:multi_store/ui/started/controller/started_controller.dart';
 
+import '../../authentication/login/screen/login_page.dart';
+import '../../authentication/register/screen/register_page.dart';
+
 class StartedPage extends BasePage<StartedController> {
   const StartedPage({super.key});
 
@@ -60,7 +63,9 @@ class StartedPage extends BasePage<StartedController> {
                 AppButton(
                   text: "started".tr,
                   onPressed: () {
-                    Get.toNamed(PageName.registerPage);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const RegisterPage();
+                    }));
                   },
                   color: AppColors.bluePrimary,
                   textColor: AppColors.white,
@@ -69,7 +74,9 @@ class StartedPage extends BasePage<StartedController> {
              AppButton(
               text: "haveAccount".tr,
               onPressed: () {
-                Get.toNamed(PageName.loginPage);
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const LoginPage();
+                }));
               },
               color: AppColors.white40,
               textColor: AppColors.blackFont,

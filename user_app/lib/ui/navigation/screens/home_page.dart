@@ -5,6 +5,7 @@ import 'package:multi_store/common/base/widgets/details/products/popular_product
 import '../../../common/base/widgets/details/banner/banner_widget.dart';
 import '../../../common/base/widgets/common/hearder_widget.dart';
 import '../../../common/base/widgets/details/category/category_item_widget.dart';
+import '../../../common/base/widgets/details/products/top_rated_widget.dart';
 import '../../../resource/theme/app_colors.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,10 +20,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white40,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.20),
+        child: const HeaderWidget(),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const HeaderWidget(),
             const SizedBox(height: 5),
             const BannerWidget(),
             const SizedBox(height: 5),
@@ -35,6 +39,13 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 5),
             const PopularProductWidget(),
+            ReusableTextWidget(
+              title: "Top sản phẩm",
+              actionText: "Xem tất cả",
+              onPressed: () {},
+            ),
+            const SizedBox(height: 5),
+            const TopRatedWidget(),
           ],
         ),
       ),

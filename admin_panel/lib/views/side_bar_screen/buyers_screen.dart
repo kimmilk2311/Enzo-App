@@ -26,7 +26,7 @@ class BuyersScreen extends StatelessWidget {
                 ),
               ),
             ),
-            BuyerWidget(),
+        const    BuyerWidget(),
           ],
         ),
       ),

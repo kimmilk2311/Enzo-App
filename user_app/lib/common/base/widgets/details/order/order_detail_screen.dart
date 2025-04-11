@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_store/controller/product_review_controller.dart';
 import 'package:multi_store/data/model/order.model.dart';
-import 'package:multi_store/data/model/product_review.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
 
@@ -12,18 +11,22 @@ import '../../common/confirm_dialog.dart';
 class OrderDetailScreen extends StatefulWidget {
   final Order order;
 
- const OrderDetailScreen({super.key, required this.order});
+  const OrderDetailScreen({super.key, required this.order});
 
   @override
   State<OrderDetailScreen> createState() => _OrderDetailScreenState();
 }
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
-  final TextEditingController _reviewController = TextEditingController();
-
   final ProductReviewController _productReviewController = ProductReviewController();
-
+  final TextEditingController _reviewController = TextEditingController();
   double rating = 0.0;
+
+  @override
+  void dispose() {
+    _reviewController.dispose();
+    super.dispose();
+  }
 
   String formatCurrency(int price) {
     final format = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
@@ -46,19 +49,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     );
   }
 
-  void clearReview(){
-    _reviewController.clear();
-    setState(() {
-      rating= 0.0;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final order = widget.order;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.order.productName,
+          order.productName,
           style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
         ),
         centerTitle: true,
@@ -89,7 +87,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
-                            widget.order.image,
+                            order.image,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -99,37 +97,28 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.order.productName,
-                              style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
-                            ),
+                            Text(order.productName, style: AppStyles.STYLE_14_BOLD),
                             const SizedBox(height: 4),
-                            Text(
-                              widget.order.category,
-                              style: AppStyles.STYLE_12.copyWith(color: AppColors.blackFont),
-                            ),
+                            Text(order.category, style: AppStyles.STYLE_12),
                             const SizedBox(height: 4),
-                            Text(
-                              formatCurrency(widget.order.productPrice),
-                              style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
-                            ),
+                            Text(formatCurrency(order.productPrice), style: AppStyles.STYLE_14_BOLD),
                             const SizedBox(height: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: widget.order.delivered
+                                color: order.delivered
                                     ? AppColors.bluePrimary
-                                    : widget.order.processing
-                                        ? AppColors.cinder500
-                                        : AppColors.gold600,
+                                    : order.processing
+                                    ? AppColors.cinder500
+                                    : AppColors.gold600,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                widget.order.delivered
+                                order.delivered
                                     ? "Đã giao hàng"
-                                    : widget.order.processing
-                                        ? "Đang xử lý"
-                                        : "Đã hủy",
+                                    : order.processing
+                                    ? "Đang xử lý"
+                                    : "Đã hủy",
                                 style: AppStyles.STYLE_12_BOLD.copyWith(color: AppColors.white),
                               ),
                             )
@@ -146,7 +135,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 child: IconButton(
                   icon: const Icon(Icons.delete, color: AppColors.pink),
                   onPressed: () {
-                    _showDeleteConfirmationDialog(context, widget.order.id);
+                    _showDeleteConfirmationDialog(context, order.id);
                   },
                 ),
               ),
@@ -156,7 +145,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Container(
               width: 336,
-              height: widget.order.delivered == true ? 170 : 120,
+              height: order.delivered ? 170 : 120,
               decoration: BoxDecoration(
                 color: AppColors.white40,
                 border: Border.all(color: AppColors.white),
@@ -165,90 +154,69 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Địa chỉ giao hàng",
-                          style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.blackFont),
-                        ),
+                        Text("Địa chỉ giao hàng", style: AppStyles.STYLE_16_BOLD),
                         const SizedBox(height: 5),
-                        Text(
-                          " ${widget.order.address}",
-                          style: AppStyles.STYLE_14.copyWith(color: AppColors.blackFont),
-                        ),
-                        Text(
-                          "Từ: ${widget.order.fullName}",
-                          style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
-                        ),
-                        Text(
-                          "Mã đơn: ${widget.order.id}",
-                          style: AppStyles.STYLE_12_BOLD.copyWith(color: AppColors.blackFont),
-                        ),
+                        Text(" ${order.address}", style: AppStyles.STYLE_14),
+                        Text("Từ: ${order.fullName}", style: AppStyles.STYLE_14_BOLD),
+                        Text("Mã đơn: ${order.id}", style: AppStyles.STYLE_12_BOLD),
                       ],
                     ),
                   ),
-                  widget.order.delivered == true
+                  order.delivered
                       ? ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text("Để lại đánh giá"),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        TextFormField(
-                                          decoration: InputDecoration(
-                                            labelText: "Đánh giá của bạn",
-                                          ),
-                                          controller: _reviewController,
-                                        ),
-                                        RatingBar(
-                                          filledIcon: Icons.star,
-                                          emptyIcon: Icons.star_border,
-                                          onRatingChanged: (value){
-                                            rating = value;
-                                          },
-                                          initialRating: 0,
-                                          maxRating: 5,
-                                        )
-                                      ],
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          final review = _reviewController.text;
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("Để lại đánh giá"),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextFormField(
+                                  decoration: const InputDecoration(labelText: "Đánh giá của bạn"),
+                                  controller: _reviewController,
+                                ),
+                                RatingBar(
+                                  filledIcon: Icons.star,
+                                  emptyIcon: Icons.star_border,
+                                  onRatingChanged: (value) {
+                                    rating = value;
+                                  },
+                                  initialRating: 0,
+                                  maxRating: 5,
+                                )
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: ()  {
+                                  final review = _reviewController.text;
 
-                                          _productReviewController.uploadReview(
-                                            buyerId: widget.order.buyerId,
-                                            fullName: widget.order.fullName,
-                                            email: widget.order.email,
-                                            productId: widget.order.id,
-                                            rating: rating,
-                                            review: review,
-                                            context: context,
-                                          );
-                                          clearReview();
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text(
-                                          "Gửi đánh giá",
-                                        ),
-                                      ),
-                                    ],
+                                  _productReviewController.uploadReview(
+                                    buyerId: order.buyerId,
+                                    fullName: order.fullName,
+                                    email: order.email,
+                                    productId: order.id,
+                                    rating: rating,
+                                    review: review,
+                                    context: context,
                                   );
-                                });
-                          },
-                          child: Text(
-                            "Đánh giá",
-                            style: AppStyles.STYLE_14.copyWith(color: AppColors.blackFont),
-                          ),
-                        )
-                      : SizedBox(),
+                                },
+                                child: const Text("Gửi đánh giá"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: const Text("Đánh giá"),
+                  )
+                      : const SizedBox(),
                 ],
               ),
             ),

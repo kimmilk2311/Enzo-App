@@ -1,103 +1,93 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vendor_store/models/vendor.dart';
 import 'package:http/http.dart' as http;
-import 'package:vendor_store/provider/vendor_provider.dart';
-import 'package:vendor_store/services/manage_http_response.dart';
-import 'package:vendor_store/views/screens/authentication/main_vendor_page.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../global_variables.dart';
-
-final providerContainer = ProviderContainer();
+import '../provider/vendor_provider.dart';
+import '../services/manage_http_response.dart';
+import '../views/screens/authentication/login_page.dart';
+import '../views/screens/authentication/main_vendor_page.dart';
 
 class VendorAuthController {
-  // Ham xu ly dang ky vendor
+
+  // ✅ Đăng ký Vendor
   Future<void> signUpVendor({
-    required String fullName,
-    required String email,
-    required String password,
     required BuildContext context,
+    required String email,
+    required String phone,
+    required String fullName,
+    required String password,
+    String image = '',
+    String address = '',
   }) async {
     try {
-      Vendor vendor = Vendor(
-        id: '',
-        fullName: fullName,
-        email: email,
-        state: '',
-        city: '',
-        locality: '',
-        role: '',
-        password: password,
+      final requestBody = jsonEncode({
+        "email": email,
+        "phone": phone,
+        "fullName": fullName,
+        "password": password,
+        "image": image,
+        "address": address,
+      });
+
+      final response = await http.post(
+        Uri.parse('$uri/api/vendor/signup'),
+        body: requestBody,
+        headers: {"Content-Type": 'application/json; charset=UTF-8'},
       );
 
-      http.Response response = await http.post(
-        Uri.parse("$uri/api/vendor/signup"),
-        body: vendor.toJson(),
-        headers: <String, String>{
-          "Content-Type": 'application/json; charset=UTF-8',
-        },
-      );
-
-      // Xu ly phan hoi tu server
       manageHttpResponse(
         response: response,
         context: context,
         onSuccess: () {
-          showSnackBar(context, "Tạo tài khoản thành công");
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+          showSnackBar(context, "Đăng ký thành công");
         },
       );
     } catch (e) {
-      showSnackBar(context, "Lỗi đăng ký: $e");
+      showSnackBar(context, "Lỗi khi đăng ký: $e");
     }
   }
 
-  // Ham xu ly dang nhap vendor
+  // ✅ Đăng nhập Vendor
   Future<void> signInVendor({
-    required String email,
-    required String password,
     required BuildContext context,
+    required String loginInput,
+      required String password,
+      required WidgetRef ref, // ✅ Thêm tham số này để cập nhật Provider
   }) async {
     try {
-      http.Response response = await http.post(
+      final response = await http.post(
         Uri.parse("$uri/api/vendor/signin"),
-        body: jsonEncode({"email": email, "password": password}),
-        headers: <String, String>{
-          "Content-Type": 'application/json; charset=UTF-8',
-        },
+        body: jsonEncode({"loginInput": loginInput, "password": password}),
+        headers: {"Content-Type": 'application/json; charset=UTF-8'},
       );
 
-
-      // Xu ly phan hoi tu server
       manageHttpResponse(
         response: response,
         context: context,
         onSuccess: () async {
-          SharedPreferences preferences = await SharedPreferences.getInstance();
+          final data = jsonDecode(response.body);
+          final String token = data['token'];
+          final vendorData = data['vendor'];
+          final String vendorId = vendorData['id'] ?? vendorData['_id']; // ✅ Lấy đúng `vendorId`
 
-          // Lay token tu phan hoi cua server, kiem tra truoc khi su dung
-          var responseBody = jsonDecode(response.body);
-          if (responseBody['token'] == null || responseBody['vendor'] == null) {
-            showSnackBar(context, "Dữ liệu phản hồi từ máy chủ không hợp lệ");
-            return;
-          }
+          SharedPreferences prefs = await SharedPreferences.getInstance();
 
-          String token = responseBody['token'];
-          final vendorData = responseBody['vendor'];
+          // ✅ Xóa toàn bộ dữ liệu cũ trước khi lưu dữ liệu mới
+          await prefs.remove('auth_token');
+          await prefs.remove('vendor');
+          await prefs.remove('vendorId');
 
-          // Luu token vao SharedPreferences
-          await preferences.setString('auth_token', token);
+          // ✅ Lưu dữ liệu mới
+          await prefs.setString('auth_token', token);
+          await prefs.setString('vendor', jsonEncode(vendorData));
+          await prefs.setString('vendorId', vendorId);
 
-          // Chuyen doi vendorData thanh JSON an toan
-          final vendorJson = jsonEncode(vendorData);
-          await preferences.setString('vendor', vendorJson);
+          // ✅ Cập nhật Provider với dữ liệu mới
+          ref.read(vendorProvider.notifier).setVendor(jsonEncode(vendorData));
 
-
-          // Cap nhat trang thai ung dung voi du lieu vendor su dung Riverpod
-          providerContainer.read(vendorProvider.notifier).setVendor(vendorJson);
-
-          // Dieu huong den trang chinh sau khi dang nhap thanh cong
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const MainVendorPage()),
@@ -106,7 +96,28 @@ class VendorAuthController {
         },
       );
     } catch (e) {
-      showSnackBar(context, "Lỗi đăng nhập: $e");
+      showSnackBar(context, "Lỗi khi đăng nhập: $e");
+    }
+  }
+
+
+  // ✅ Đăng xuất Vendor
+  Future<void> signOutVendor({required BuildContext context}) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('auth_token');
+      await prefs.remove('vendor');
+      await prefs.remove('vendorId'); // 🔑 Xóa vendorId khi đăng xuất
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+            (route) => false,
+      );
+
+      showSnackBar(context, "Đăng xuất thành công");
+    } catch (e) {
+      showSnackBar(context, "Lỗi khi đăng xuất");
     }
   }
 }

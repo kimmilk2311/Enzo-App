@@ -1,32 +1,37 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:convert'; // Import thêm để hỗ trợ chuyển đổi từ JSON String
 import 'package:vendor_store/models/vendor.dart';
 
-// StateNotifier: quan ly trang thai vendor
-// StateNotifier la mot class duoc cung cap boi Riverpod de giup quan ly trang thai,
-// no cung duoc thiet ke de thong bao cho cac listener ve su thay doi trang thai
+// StateNotifier: Quản lý trạng thái vendor
 class VendorProvider extends StateNotifier<Vendor?> {
   VendorProvider()
       : super(Vendor(
     id: '',
     fullName: '',
     email: '',
-    state: '',
-    city: '',
-    locality: '',
+    phone: '',
+    address: '',
+    image: '',
     role: '',
     password: '',
   ));
 
-  // Getter lay thong tin vendor hien tai
+  // Getter lấy thông tin vendor hiện tại
   Vendor? get vendor => state;
 
-  // Phuong thuc cap nhat state tu JSON
-  // Muc dich: Cap nhat trang thai vendor dua tren chuoi JSON dai dien cho doi tuong vendor
+  // Phương thức cập nhật state từ JSON String
+  // Mục đích: Cập nhật trạng thái vendor dựa trên chuỗi JSON đại diện cho đối tượng vendor
   void setVendor(String vendorJson) {
-    state = Vendor.fromJson(vendorJson);
+    final Map<String, dynamic> vendorMap = jsonDecode(vendorJson);
+    state = Vendor.fromJson(vendorMap);
   }
 
-  // Phuong thuc xoa trang thai vendor khi dang xuat
+  // Phương thức cập nhật state từ Object Vendor
+  void setVendorFromObject(Vendor vendor) {
+    state = vendor;
+  }
+
+  // Phương thức chuyển trạng thái vendor về null khi đăng xuất
   void signOut() {
     state = null;
   }

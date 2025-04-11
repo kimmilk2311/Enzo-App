@@ -4,9 +4,7 @@ import 'package:get/get.dart';
 import 'package:multi_store/ui/started/binding/started_binding.dart';
 import 'package:multi_store/ui/started/screen/started_page.dart';
 
-import '../ui/authentication/login/binding/login_binding.dart';
 import '../ui/authentication/login/screen/login_page.dart';
-import '../ui/authentication/register/binding/register_binding.dart';
 import '../ui/authentication/register/screen/register_page.dart';
 import '../ui/main/binding/main_binding.dart';
 import '../ui/main/screen/main_page.dart';
@@ -47,16 +45,7 @@ class AppPages {
     //   page: () => const CategoryPage(),
     //   binding: CategoryBinding(),
     // ),
-    GetPage(
-      name: PageName.loginPage,
-      page: () => const LoginPage(),
-      binding: LoginBinding(),
-    ),
-    GetPage(
-      name: PageName.registerPage,
-      page: () => const RegisterPage(),
-      binding: RegisterBinding(),
-    ),
+
     GetPage(
       name: PageName.mainPage,
       page: () => const MainPage(),

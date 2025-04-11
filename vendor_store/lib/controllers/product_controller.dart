@@ -7,7 +7,7 @@ import 'package:vendor_store/services/manage_http_response.dart';
 import '../global_variables.dart';
 
 class ProductController {
- Future<void> uploadProduct({
+  Future<void> uploadProduct({
     required String productName,
     required int productPrice,
     required int quantity,
@@ -19,8 +19,19 @@ class ProductController {
     required List<File>? pickedImages,
     required context,
   }) async {
-   SharedPreferences sharedPreferences =  await SharedPreferences.getInstance();
-   String? token = sharedPreferences.getString("auth_token");
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? token = sharedPreferences.getString("auth_token");
+    String? storedVendorId = sharedPreferences.getString("vendorId");
+
+    // ✅ Lấy vendorId từ SharedPreferences nếu không có từ tham số
+    if (vendorId.isEmpty && (storedVendorId == null || storedVendorId.isEmpty)) {
+      showSnackBar(context, 'Không tìm thấy vendorId.');
+      print("Không tìm thấy vendorId.");
+      return;
+    }
+
+    final finalVendorId = vendorId.isEmpty ? storedVendorId : vendorId;
+
     try {
       if (pickedImages == null || pickedImages.isEmpty) {
         showSnackBar(context, 'Vui lòng chọn hình ảnh');
@@ -37,15 +48,9 @@ class ProductController {
           );
           images.add(cloudinaryResponse.secureUrl);
         } catch (e) {
-          print("Lỗi tải ảnh lên Cloudinary: $e");
-          showSnackBar(context, "Lỗi khi tải ảnh lên Cloudinary");
+          showSnackBar(context, "Lỗi khi tải ảnh lên Cloudinary: $e");
           return;
         }
-      }
-
-      if (category.isEmpty || subCategory.isEmpty) {
-        showSnackBar(context, "Chọn danh mục sản phẩm");
-        return;
       }
 
       final Product product = Product(
@@ -55,39 +60,30 @@ class ProductController {
         quantity: quantity,
         description: description,
         category: category,
-        vendorId: vendorId,
+        vendorId: finalVendorId!,
         fullName: fullName,
         subCategory: subCategory,
         images: images,
       );
 
-      try {
-        http.Response response = await http.post(
-          Uri.parse("$uri/api/add-products"),
-          body: product.toJson(),
-          headers: <String, String>{
-            "Content-Type": "application/json; charset=UTF-8",
-            "x-auth-token": token!,
-          },
-        );
+      final response = await http.post(
+        Uri.parse("$uri/api/add-products"),
+        body: product.toJson(),
+        headers: <String, String>{
+          "Content-Type": "application/json; charset=UTF-8",
+          "x-auth-token": token!,
+        },
+      );
 
-        print("Response Status Code: ${response.statusCode}");
-        print("Response Body: ${response.body}");
-
-        manageHttpResponse(
-          response: response,
-          context: context,
-          onSuccess: () {
-            showSnackBar(context, "Tải sản phẩm thành công");
-          },
-        );
-      } catch (e) {
-        print("Lỗi kết nối API: $e");
-        showSnackBar(context, "Lỗi kết nối đến server");
-      }
+      manageHttpResponse(
+        response: response,
+        context: context,
+        onSuccess: () {
+          showSnackBar(context, "Tải sản phẩm thành công");
+        },
+      );
     } catch (e) {
-      print("Lỗi không xác định: $e");
-      showSnackBar(context, "Đã xảy ra lỗi, vui lòng thử lại");
+      showSnackBar(context, "Đã xảy ra lỗi, vui lòng thử lại: $e");
     }
   }
 }

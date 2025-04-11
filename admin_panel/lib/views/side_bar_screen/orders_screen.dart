@@ -40,7 +40,7 @@ class OrdersScreen extends StatelessWidget {
           Container(
             alignment: Alignment.topLeft,
             child: Text(
-              'Manage Orders',
+              'Quản lý đơn hàng',
               style: GoogleFonts.montserrat(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,

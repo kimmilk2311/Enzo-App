@@ -87,37 +87,37 @@ class _MainScreenState extends State<MainScreen> {
         ),
         items: const [
           AdminMenuItem(
-            title: "Vendors",
+            title: "Nhà cung cấp",
             route: VendorsScreen.id,
             icon: CupertinoIcons.person_3,
           ),
           AdminMenuItem(
-            title: "Buyers",
+            title: "Người dùng",
             route: BuyersScreen.id,
             icon: CupertinoIcons.person,
           ),
           AdminMenuItem(
-            title: "Orders",
+            title: "Đơn hàng",
             route: OrdersScreen.id,
             icon: CupertinoIcons.shopping_cart,
           ),
           AdminMenuItem(
-            title: "Categories",
+            title: "Danh mục hàng",
             route: CategoryScreen.id,
             icon: Icons.category,
           ),
           AdminMenuItem(
-            title: "SubCategories",
+            title: "Danh mục con",
             route: SubCategoryScreen.id,
             icon: Icons.category_outlined,
           ),
           AdminMenuItem(
-            title: "Upload Banner",
+            title: "Tải banner",
             route: UploadBannerScreen.id,
             icon: Icons.upload,
           ),
           AdminMenuItem(
-            title: "Products",
+            title: "Sản phẩm",
             route: ProductsScreen.id,
             icon: Icons.store,
           ),

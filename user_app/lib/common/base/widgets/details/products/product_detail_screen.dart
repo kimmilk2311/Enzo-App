@@ -166,6 +166,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       color: AppColors.blackFont,
                     ),
                   ),
+                  const SizedBox(height: 20),
                   ReusableTextWidget(
                     title: "Sản phẩm liên quan",
                     actionText: " ",
@@ -185,6 +186,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       },
                     ),
                   ),
+
+               const   SizedBox(height: 50),
                 ],
               ),
             ),

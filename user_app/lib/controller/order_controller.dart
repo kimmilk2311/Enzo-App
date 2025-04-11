@@ -81,8 +81,9 @@ class OrderController {
         List<dynamic> data = jsonDecode(response.body);
         List<Order> orders = data.map((order) => Order.fromJson(order)).toList();
         return orders;
-      }
-      {
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
         throw Exception("Không tải được đơn đặt hàng");
       }
     } catch (e) {
@@ -112,6 +113,18 @@ class OrderController {
       );
     } catch (e) {
       showSnackBar(context, e.toString());
+    }
+  }
+
+  // so don hang hoan tat
+  Future<int> getDeliveredOrdersCount({required String buyerId}) async {
+    try {
+      List<Order> orders = await loadOrders(buyerId: buyerId);
+
+      int deliveredCount = orders.where((order) => order.delivered).length;
+      return deliveredCount;
+    } catch (e) {
+      throw Exception("Lỗi tải đơn đặt hàng");
     }
   }
 }

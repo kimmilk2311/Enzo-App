@@ -62,7 +62,7 @@ productRouter.get('/api/products-by-category/:category', async (req, res) => {
     }
 
     // Truy vấn danh mục trong MongoDB (Không phân biệt chữ hoa/thường)
-    const products = await Product.find({ category,popular:true });
+    const products = await Product.find({ category});
 
     // Kiểm tra nếu không có sản phẩm nào trong danh mục
     if (!products || products.length === 0) {
@@ -112,15 +112,55 @@ productRouter.get('/api/related-products-by-subcategory/:productId', async (req,
 // 10 sản phẩm được đánh giá cao nhất
 productRouter.get('/api/top-rated-products', async (req, res) => {
     try {
-        const topRatedroducts = await Product.find().sort({ averageRating: -1 }).limit(10);
-        if (!topRatedroducts || topRatedroducts.length == 0) {
+        const topRatedProducts = await Product.find().sort({ averageRating: -1 }).limit(10);
+        if (!topRatedProducts || topRatedProducts.length == 0) {
             return res.status(404).json({ msg: "Không tìm thấy sản phẩm" });
         } else {
-            return res.status(200).json(topRatedroducts);
+            return res.status(200).json(topRatedProducts);
         }
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
 });
 
+productRouter.get("/api/products-by-subcategory/:subcategoryId", async (req, res) => {
+try {
+  const { subcategoryId } = req.params;
+  const products = await Product.find({ subCategory: subcategoryId });
+  if (!products || products.length === 0)
+    {
+  return res.status(404).json({msg:"Không tìm thấy sản phẩm theo danh mục con"});
+}
+return res.status(200).json(products);
+} catch (e) {
+  res.status(500).json({ error: e.message });
+}
+});
+
+// timf kiếm sản phẩm theo tên hoac mô tả
+productRouter.get('/api/search-products', async (req, res) => {
+    try {
+        const { query } = req.query;
+        if (!query) {
+            return res.status(400).json({ msg: "Vui lòng cung cấp từ khóa tìm kiếm!" });
+        }
+
+       // tìm kiếm bộ sưu tập Sản phẩm cho docy=ument trong đó 'productName' hoặc 'description' chứa chuỗi truy vấn  
+       const products = await Product.find({
+        $or: [
+          { productName: { $regex: query, $options: 'i' } },
+          { description: { $regex: query, $options: 'i' } }
+        ]
+      });
+      
+      if (!products || products.length === 0) {
+        return res.status(404).json({ msg: "Không tìm thấy sản phẩm nào!" });
+      }
+      
+      return res.status(200).json(products);
+      
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
 module.exports = productRouter;

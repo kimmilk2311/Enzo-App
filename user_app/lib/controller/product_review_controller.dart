@@ -26,19 +26,21 @@ class ProductReviewController {
         rating: rating,
         review: review,
       );
-
       http.Response response = await http.post(
         Uri.parse("$uri/api/product-review"),
         body: productReview.toJson(),
-        headers: {"Content-Type": 'application/json; charset=UTF-8'},
-      );
-      manageHttpResponse(
-        response: response,
-        context: context,
-        onSuccess: () {
-          showSnackBar(context, "Đã gửi đánh giá");
+        headers: <String, String>{
+          "Content-Type": 'application/json; charset=UTF-8',
         },
       );
-    } catch (e) {}
+      manageHttpResponse(
+          response: response,
+          context: context,
+          onSuccess: () {
+            showSnackBar(context, "Đánh giá thành công");
+          });
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
   }
 }

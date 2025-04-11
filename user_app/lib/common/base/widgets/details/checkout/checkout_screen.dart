@@ -10,6 +10,9 @@ import 'package:multi_store/provider/user_provider.dart';
 import 'package:multi_store/resource/asset/app_images.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
+import 'package:multi_store/services/manage_http_response.dart';
+import 'package:multi_store/ui/main/screen/main_page.dart';
+import 'package:multi_store/ui/navigation/screens/home_page.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
@@ -269,8 +272,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         delivered: false,
                         context: context,
                       );
+                    }).then((value){
+                      _cartProvider.clearCart();
+                      showSnackBar(context, "Đặt hàng thành công");
+                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                        return const MainPage();
+                      }));
                     });
-                    _cartProvider.clearCart();
                   }
                 },
                 color: AppColors.bluePrimary,

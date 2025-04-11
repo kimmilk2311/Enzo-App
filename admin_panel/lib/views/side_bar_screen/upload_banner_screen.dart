@@ -62,7 +62,7 @@ class _UploadBannerScreenState extends State<UploadBannerScreen> {
                 child: Center(
                   child: _image != null
                       ? Image.memory(_image)
-                      : Text("Category Image"),
+                      :const Text("Banner"),
                 ),
               ),
               Padding(
@@ -72,7 +72,7 @@ class _UploadBannerScreenState extends State<UploadBannerScreen> {
                     await _bannerController.uploadBanner(
                         pickImage: _image, context: context);
                   },
-                  child: Text("Save"),
+                  child: const Text("Lưu"),
                 ),
               ),
               Padding(
@@ -81,7 +81,7 @@ class _UploadBannerScreenState extends State<UploadBannerScreen> {
                   onPressed: () {
                     pickImage();
                   },
-                  child: Text("Pick Image"),
+                  child:const Text("Chọn ảnh"),
                 ),
               ),
             ],

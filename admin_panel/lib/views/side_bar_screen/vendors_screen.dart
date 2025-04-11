@@ -27,7 +27,7 @@ class VendorsScreen extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          VendorWidget(),
+        const  VendorWidget(),
         ],
       ),
     );

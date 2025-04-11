@@ -9,18 +9,18 @@ import 'package:multi_store/services/manage_http_response.dart';
 import '../../../../controller/auth_controller.dart';
 
 class MyProfileWidget extends ConsumerStatefulWidget {
-  final String image;
-  final String fullName;
-  final String phone;
-  final String email;
+  final String? image;
+  final String? fullName;
+  final String? phone;
+  final String? email;
   final String? address;
 
   const MyProfileWidget({
     super.key,
-    required this.image,
-    required this.fullName,
-    required this.phone,
-    required this.email,
+     this.image,
+    this.fullName,
+    this.phone,
+     this.email,
     this.address,
   });
 
@@ -71,7 +71,7 @@ class _MyProfileWidgetState extends ConsumerState<MyProfileWidget> {
       await AuthController().updateUserLocation(
         context: context,
         id: user.id,
-        address: newAddress,
+        address: newAddress, ref: ref,
       );
 
       ref.read(userProvider.notifier).recreateUserState(address: newAddress);
@@ -128,7 +128,8 @@ class _MyProfileWidgetState extends ConsumerState<MyProfileWidget> {
                     const Text("Ảnh đại diện", style: AppStyles.STYLE_14_BOLD),
                     CircleAvatar(
                       radius: 30,
-                      backgroundImage: _buildImage(widget.image),
+                      backgroundImage: _buildImage(widget.image ?? ''),
+
                     ),
                   ],
                 ),

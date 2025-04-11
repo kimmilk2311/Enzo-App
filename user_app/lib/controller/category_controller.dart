@@ -42,7 +42,7 @@ class CategoryController {
             ),
           );
         }
-      } else {
+      }  else {
         throw Exception('Failed to load categories.');
       }
     } catch (e) {

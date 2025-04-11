@@ -1,18 +1,90 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_store/common/base/widgets/common/app_button.dart';
 import 'package:multi_store/common/base/widgets/common/app_text_field.dart';
-import 'package:multi_store/common/base/widgets/base_page_widget.dart';
 import 'package:multi_store/resource/asset/app_images.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
-import 'package:multi_store/routes/app_routes.dart';
-import 'package:multi_store/ui/authentication/register/controller/register_controller.dart';
+import 'package:multi_store/controller/auth_controller.dart';
+import 'package:multi_store/ui/authentication/login/screen/login_page.dart';
 
-class RegisterPage extends BasePage<RegisterController> {
+class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  ConsumerState<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends ConsumerState<RegisterPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  String fullName = '';
+  String email = '';
+  String phone = '';
+  String password = '';
+  File? imageFile;
+  bool isLoading = false;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: source, imageQuality: 70);
+    if (pickedImage != null) {
+      setState(() {
+        imageFile = File(pickedImage.path);
+      });
+    }
+  }
+
+  Future<void> _registerUser(BuildContext context) async {
+    setState(() => isLoading = true);
+    final base64Image = imageFile != null ? base64Encode(await imageFile!.readAsBytes()) : '';
+
+    await AuthController().signUpUsers(
+      context: context,
+      email: email,
+      phone: phone,
+      fullName: fullName,
+      password: password,
+      image: base64Image,
+      address: '',
+    );
+
+    setState(() => isLoading = false);
+  }
+
+  void _showImagePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text("Chọn từ thư viện"),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera),
+                title: const Text("Chụp ảnh"),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +97,7 @@ class RegisterPage extends BasePage<RegisterController> {
           SizedBox(
             height: screenHeight * 0.4,
             width: double.infinity,
-            child: Image.asset(
-              AppImages.imgBrSignUp,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(AppImages.imgBrSignUp, fit: BoxFit.cover),
           ),
           SafeArea(
             child: Center(
@@ -36,110 +105,84 @@ class RegisterPage extends BasePage<RegisterController> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Form(
-                    key: controller.formKey,
+                    key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "titleRegister".tr,
-                            style: AppStyles.STYLE_36_BOLD.copyWith(
-                              color: AppColors.black,
-                            ),
+                            "Đăng ký",
+                            style: AppStyles.STYLE_36_BOLD.copyWith(color: AppColors.black),
                           ),
                         ),
                         const SizedBox(height: 20),
 
-                        // Ô chọn ảnh đại diện
-                        Obx(() => GestureDetector(
+                        GestureDetector(
                           onTap: () => _showImagePicker(context),
                           child: CircleAvatar(
                             radius: 50,
                             backgroundColor: AppColors.gold50,
-                            backgroundImage: controller.imageFile.value != null
-                                ? FileImage(controller.imageFile.value!)
-                                : null,
-                            child: controller.imageFile.value == null
+                            backgroundImage: imageFile != null ? FileImage(imageFile!) : null,
+                            child: imageFile == null
                                 ? const Icon(Icons.camera_alt, size: 40, color: Colors.blue)
                                 : null,
                           ),
-                        )),
+                        ),
                         const SizedBox(height: 20),
 
-                        // Ô nhập họ tên
                         AppTextField(
-                          hintText: "fullName".tr,
+                          hintText: "Họ và tên",
                           prefixImage: AppImages.icUser,
-                          onChanged: (value) {
-                            controller.fullName = value;
-                          },
+                          onChanged: (value) => fullName = value,
                         ),
                         const SizedBox(height: 10),
-
-                        // Ô nhập email
                         AppTextField(
-                          hintText: "enterEmail".tr,
+                          hintText: "Email",
                           prefixImage: AppImages.icUser,
-                          onChanged: (value) {
-                            controller.email = value;
-                          },
+                          onChanged: (value) => email = value,
                         ),
                         const SizedBox(height: 10),
-
-                        // Ô nhập số điện thoại
                         AppTextField(
-                          hintText: "enterPhone".tr,
+                          hintText: "Số điện thoại",
                           prefixImage: AppImages.icUser,
-                          onChanged: (value) {
-                            controller.phone = value;
-                          },
+                          onChanged: (value) => phone = value,
                         ),
                         const SizedBox(height: 10),
-
-                        // Ô nhập mật khẩu
                         AppTextField(
-                          hintText: "enterPassword".tr,
+                          hintText: "Mật khẩu",
                           prefixImage: AppImages.icPassword,
                           isPassword: true,
-                          onChanged: (value) {
-                            controller.password = value;
-                          },
+                          onChanged: (value) => password = value,
                         ),
                         const SizedBox(height: 20),
 
-                        // Nút đăng ký
-                        Obx(() => AppButton(
-                          text: "register".tr,
-                          isLoading: controller.isLoading.value,
+                        AppButton(
+                          text: "Đăng ký",
+                          isLoading: isLoading,
                           onPressed: () {
-                            controller.registerUser(context);
+                            if (_formKey.currentState!.validate()) {
+                              _registerUser(context);
+                            }
                           },
                           color: AppColors.bluePrimary,
                           textColor: AppColors.white,
-                        )),
+                        ),
                         const SizedBox(height: 20),
 
-                        // Điều hướng đến đăng nhập
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              "haveAccount".tr,
-                              style: AppStyles.STYLE_16.copyWith(
-                                color: AppColors.black,
-                              ),
-                            ),
+                            const Text("Bạn đã có tài khoản?"),
                             GestureDetector(
                               onTap: () {
-                                Get.toNamed(PageName.loginPage);
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => const LoginPage(),
+                                ));
                               },
                               child: Text(
-                                "login".tr,
-                                style: AppStyles.STYLE_16_BOLD.copyWith(
-                                  color: AppColors.bluePrimary,
-                                ),
+                                " Đăng nhập",
+                                style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.bluePrimary),
                               ),
                             ),
                           ],
@@ -154,38 +197,6 @@ class RegisterPage extends BasePage<RegisterController> {
           ),
         ],
       ),
-    );
-  }
-
-  // Hiển thị bottom sheet chọn ảnh
-  void _showImagePicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text("Chọn từ thư viện"),
-                onTap: () {
-                  controller.pickImage(ImageSource.gallery);
-                  Get.back();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera),
-                title: const Text("Chụp ảnh"),
-                onTap: () {
-                  controller.pickImage(ImageSource.camera);
-                  Get.back();
-                },
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

@@ -101,7 +101,6 @@ class _CategoryItemWidgetState extends ConsumerState<CategoryItemWidget> {
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 4),
                                 Text(
                                   category.name,
                                   textAlign: TextAlign.center,
