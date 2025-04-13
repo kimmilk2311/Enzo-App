@@ -91,4 +91,48 @@ class ProductController {
       throw Exception("Lỗi tải sản phẩm: $e");
     }
   }
+
+  Future<List<Product>> searchProducts(String query) async {
+    try {
+      final response =
+      await http.get(Uri.parse('$uri/api/search-products?query=$query'), headers: <String, String>{
+        "Content-Type": 'application/json; charset=UTF-8',
+      });
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+        List<Product> searchedProducts =
+        data.map((product) => Product.fromMap(product as Map<String, dynamic>)).toList();
+        return searchedProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Không tìm thấy sản phẩm");
+      }
+    } catch (e) {
+      throw Exception("Lỗi tải sản phẩm: $e");
+    }
+  }
+
+
+  Future<List<Product>> loadProductBySubCategory(String subCategory) async {
+    try {
+      final response = await http.get(Uri.parse('$uri/api/products-by-subcategory/$subCategory'), headers: <String, String>{
+        "Content-Type": 'application/json; charset=UTF-8',
+      });
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+        List<Product> subCategoryProducts =
+        data.map((product) => Product.fromMap(product as Map<String, dynamic>)).toList();
+        return subCategoryProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Không tải được danh mục con sản phẩm");
+      }
+    } catch (e) {
+      throw Exception("Lỗi tải sản phẩm: $e");
+    }
+  }
 }

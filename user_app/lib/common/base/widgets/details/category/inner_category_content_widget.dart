@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:multi_store/common/base/widgets/common/hearder_widget.dart';
-import 'package:multi_store/common/base/widgets/common/reusable_text_widget.dart';
 import 'package:multi_store/common/base/widgets/details/banner/inner_banner_widget.dart';
-import 'package:multi_store/common/base/widgets/common/inner_header_widget.dart';
 import 'package:multi_store/common/base/widgets/details/category/subcategory_tile_widget.dart';
 import 'package:multi_store/controller/product_controller.dart';
+import 'package:multi_store/controller/subcategory_controller.dart';
+import 'package:multi_store/data/model/category_model.dart';
+import 'package:multi_store/data/model/product.dart';
 import 'package:multi_store/data/model/subcategory_model.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
-
-import '../../../../../controller/subcategory_controller.dart';
-import '../../../../../data/model/category_model.dart';
-import '../../../../../data/model/product.dart';
-import '../products/product_item_widget.dart';
+import '../products/subcategory_product_screen.dart';
 
 class InnerCategoryContentWidget extends StatefulWidget {
   final Category category;
@@ -25,118 +22,111 @@ class InnerCategoryContentWidget extends StatefulWidget {
 
 class _InnerCategoryContentWidgetState extends State<InnerCategoryContentWidget> {
   late Future<List<SubCategory>> _subcategories;
-  late Future<List<Product>> futureProducts;
-  final SubcategoryController _subcategoryController = SubcategoryController();
 
   @override
   void initState() {
     super.initState();
-    _subcategories = _subcategoryController.getSubCategoriesByCategoryName(widget.category.name);
-    futureProducts = ProductController().loadPopularProducts();
+    _subcategories = SubcategoryController().getSubCategoriesByCategoryName(widget.category.name);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 20),
-        child: const HeaderWidget(),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(80),
+        child: HeaderWidget(),
       ),
       backgroundColor: AppColors.white40,
       body: Column(
         children: [
           InnerBannerWidget(image: widget.category.banner),
           const SizedBox(height: 10),
-          Center(
-            child: Text(
-              "Danh mục sản phẩm",
-              style: AppStyles.STYLE_20_BOLD.copyWith(
-                color: AppColors.blackFont,
-                letterSpacing: 1.7,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Center(
+              child: Text(
+                "Danh mục sản phẩm",
+                style: AppStyles.STYLE_20_BOLD.copyWith(
+                  color: AppColors.blackFont,
+                  letterSpacing: 1.1,
+                ),
               ),
             ),
           ),
-          FutureBuilder<List<SubCategory>>(
-            future: _subcategories,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error: ${snapshot.error}'),
-                );
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(
-                  child: Text("Không có danh mục phụ"),
-                );
-              } else {
-                final subcategories = snapshot.data!;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Column(
-                    children: List.generate((subcategories.length / 7).ceil(), (setIndex) {
-                      final start = setIndex * 7;
-                      final end = (setIndex + 1) * 7;
-                      return Padding(
-                        padding: const EdgeInsets.all(8.9),
-                        child: Row(
-                          children: subcategories
-                              .sublist(start, end > subcategories.length ? subcategories.length : end)
-                              .map((subcategory) => SubcategoryTileWidget(
-                                    image: subcategory.image,
-                                    title: subcategory.subCategoryName,
-                                  ))
-                              .toList(),
-                        ),
-                      );
-                    }),
-                  ),
-                );
-              }
-            },
-          ),
-          ReusableTextWidget(
-            title: "Sản phẩm phổ biến",
-            actionText: "Xem tất cả",
-            onPressed: () {},
-          ),
-          FutureBuilder(
-              future: futureProducts,
+          Expanded(
+            child: FutureBuilder<List<SubCategory>>(
+              future: _subcategories,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      "Error ${snapshot.error}",
-                    ),
-                  );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
-                    child: Text("Không có sản phẩm trong danh mục"),
-                  );
-                } else {
-                  final products = snapshot.data;
-                  return SizedBox(
-                    height: 250,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: products!.length,
-                      itemBuilder: (context, index) {
-                        final product = products[index];
-                        return ProductItemWidget(
-                          product: product,
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text("Lỗi: ${snapshot.error}"));
+                }
+
+                final subcategories = snapshot.data ?? [];
+
+                if (subcategories.isEmpty) {
+                  return const Center(child: Text("Không có danh mục phụ."));
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: subcategories.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    final sub = subcategories[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => SubcategoryProductScreen(subcategory: sub),
+                          ),
                         );
                       },
-                    ),
-                  );
-                }
-              }),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                sub.image,
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                sub.subCategoryName,
+                                style: AppStyles.STYLE_16_BOLD,
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

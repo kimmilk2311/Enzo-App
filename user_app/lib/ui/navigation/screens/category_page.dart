@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:multi_store/common/base/widgets/common/hearder_widget.dart';
 import 'package:multi_store/common/base/widgets/details/category/subcategory_tile_widget.dart';
+import 'package:multi_store/common/base/widgets/details/products/subcategory_product_screen.dart';
 import 'package:multi_store/data/model/category_model.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
@@ -145,9 +146,17 @@ class _CategoryPageState extends State<CategoryPage> {
                       ),
                       itemBuilder: (context, index) {
                         final subcategory = controller.subcategories[index];
-                        return SubcategoryTileWidget(
-                          image: subcategory.image,
-                          title: subcategory.subCategoryName,
+                        return GestureDetector(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context){
+                              return SubcategoryProductScreen(subcategory: subcategory);
+                            }
+                            ));
+                          },
+                          child: SubcategoryTileWidget(
+                            image: subcategory.image,
+                            title: subcategory.subCategoryName,
+                          ),
                         );
                       },
                     ),

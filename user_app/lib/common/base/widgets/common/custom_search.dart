@@ -5,6 +5,8 @@ import 'package:multi_store/resource/asset/app_images.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
 
+import '../details/products/search_product_screen.dart';
+
 class CustomSearch extends StatelessWidget {
   const CustomSearch({super.key});
 
@@ -14,11 +16,20 @@ class CustomSearch extends StatelessWidget {
       width: 260,
       height: 40,
       child: TextField(
+        readOnly: true,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SearchProductScreen()),
+          );
+        },
         decoration: InputDecoration(
           hintText: "search".tr,
           hintStyle: AppStyles.STYLE_14.copyWith(color: AppColors.greyDark),
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
           suffixIcon: GestureDetector(
+            onTap: () {
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: SvgPicture.asset(
@@ -27,7 +38,6 @@ class CustomSearch extends StatelessWidget {
                 height: 8,
               ),
             ),
-            onTap: () {},
           ),
           fillColor: AppColors.white40,
           filled: true,

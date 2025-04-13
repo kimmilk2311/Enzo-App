@@ -7,6 +7,7 @@ import 'package:multi_store/provider/favorite_provider.dart';
 import 'package:multi_store/resource/asset/app_images.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
+import 'package:multi_store/ui/navigation/screens/cart_page.dart';
 
 class FavoritePage extends ConsumerStatefulWidget {
   const FavoritePage({super.key});
@@ -49,8 +50,12 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
           Stack(
             children: [
               IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(AppImages.icCart),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context){
+                    return const CartPage();
+                  }));
+                },
+                icon: SvgPicture.asset(AppImages.icHeart),
               ),
               if (wishItemData.isNotEmpty)
                 Positioned(
