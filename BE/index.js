@@ -9,14 +9,13 @@ const productReviewRouter = require('./routers/product_review');
 const VendorRouter = require('./routers/vendor'); 
 const orderRouter = require('./routers/order');
 const cors = require('cors');
-require('dotenv').config();
-
 // Define the port number the server will listen on
 const PORT = process.env.PORT || 3000;
 
 // Create an instance of an express application
 const app = express();
 // mongodb string
+const DB = "mongodb+srv://dduucc2912:Thanhvu_69@cluster0.gumbc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 app.use(express.json());
 app.use(cors());
@@ -29,7 +28,7 @@ app.use(productReviewRouter);
 app.use(VendorRouter);
 app.use(orderRouter);
 
-mongoose.connect(process.env.DATABASE).then(() =>{
+mongoose.connect(DB).then(() =>{
     console.log('Mongodb Connected');
 });
 

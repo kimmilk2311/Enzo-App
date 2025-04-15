@@ -163,4 +163,31 @@ productRouter.get('/api/search-products', async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
+
+// chỉnh sửa sản phẩm theo productId
+productRouter.put('/api/edit-product/:productId', auth, vendorAuth, async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ msg: "Không tìm thấy sản phẩm" });
+        }
+        if (product.vendorId.toString() !== req.user.id) {
+          return res.status(403).json({ msg: "Bạn không có quyền sửa sản phẩm này" });
+      }
+      
+        const {vendorId, ...updateData} = req.body;
+
+     const updatedProduct =   await Product.findByIdAndUpdate(
+          productId, 
+          {$set:updateData}, 
+          { new: true }
+        );
+        res.status(200).json(updatedProduct);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+
 module.exports = productRouter;
