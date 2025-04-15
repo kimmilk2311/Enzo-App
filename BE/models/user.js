@@ -53,7 +53,11 @@ const userSchema = mongoose.Schema({
             },
             message: "Mật khẩu phải có ít nhất 8 ký tự",
         }
-    }
+    },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const User = mongoose.model("User", userSchema);

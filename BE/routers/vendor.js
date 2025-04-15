@@ -3,7 +3,7 @@ const Vendor = require('../models/vendor');
 const VendorRouter = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const authVendor = require('../middlewares/authVendorMiddleware');
+const { auth,vendorAuth } = require('..//middlewares/auth');
 
 // Signup API
 VendorRouter.post('/api/vendor/signup', async (req, res) => {
@@ -60,9 +60,9 @@ VendorRouter.post('/api/vendor/signin', async (req, res) => {
 
 
 // ✅ API lấy thông tin Vendor từ token
-VendorRouter.get('/api/vendor/profile', authVendor, async (req, res) => {
+VendorRouter.get('/api/vendor/profile', auth, vendorAuth , async (req, res) => {
   try {
-    const vendor = await Vendor.findById(req.vendorId).select('-password'); // bỏ mật khẩu
+    const vendor = await Vendor.findById(req.user._id).select('-password');
 
     if (!vendor) {
       return res.status(404).json({ msg: "Không tìm thấy vendor." });
@@ -73,6 +73,7 @@ VendorRouter.get('/api/vendor/profile', authVendor, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 //fetch all vendors(exclude password)
 VendorRouter.get('/api/vendors',async(req,res)=>{
