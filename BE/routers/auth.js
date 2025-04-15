@@ -3,40 +3,59 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const authRouter = express.Router();
 const jwt = require('jsonwebtoken');
-
-// API đăng ký
+const sendOtpEmail = require('../helper/send_email');
+const crypto = require('crypto');
+const otpStore = new Map(); 
+// ✅ API đăng ký
 authRouter.post('/api/signup', async (req, res) => {
-    try {
-        const { fullName, email, phone, password, image } = req.body;
+  try {
+      const { fullName, email, phone, password, image } = req.body;
 
-        const existingEmail = await User.findOne({ email });
-        if (existingEmail) {
-            return res.status(400).json({ msg: "Email này đã được sử dụng" });
-        }
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+          return res.status(400).json({ msg: "Email này đã được sử dụng" });
+      }
 
-        const existingPhone = await User.findOne({ phone });
-        if (existingPhone) {
-            return res.status(400).json({ msg: "Số điện thoại này đã được sử dụng" });
-        }
+      const existingPhone = await User.findOne({ phone });
+      if (existingPhone) {
+          return res.status(400).json({ msg: "Số điện thoại này đã được sử dụng" });
+      }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-        let user = new User({
-            fullName,
-            email,
-            phone,
-            password: hashedPassword,
-            image: image || "", 
-        });
+      // ✅ Tạo mã OTP (6 chữ số)
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        user = await user.save();
+      // ✅ Lưu OTP và thời gian hết hạn (10 phút)
+      otpStore.set(email, {
+          otp,
+          expiresAt: Date.now() + 10 * 60 * 1000,
+      });
 
-        return res.json({ user });
-    } catch (e) {
-        return res.status(500).json({ error: "Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau." });
-    }
+      // ✅ Lưu người dùng vào database với isVerified: false
+      let user = new User({
+          fullName,
+          email,
+          phone,
+          password: hashedPassword,
+          isVerified: false,
+          image: image || "",
+      });
+
+      user = await user.save();
+
+      // ✅ Gửi email xác thực OTP
+      const emailResponse = await sendOtpEmail(email, otp, fullName);
+
+      return res.status(201).json({ msg: "Đăng ký thành công, vui lòng kiểm tra email để xác thực", user, emailResponse });
+
+  } catch (e) {
+      console.error(e);
+      return res.status(500).json({ error: "Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau." });
+  }
 });
+
 
 // API đăng nhập
 authRouter.post('/api/signin', async (req, res) => {
