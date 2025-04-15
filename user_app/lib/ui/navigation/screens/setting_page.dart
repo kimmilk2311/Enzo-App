@@ -384,6 +384,30 @@ class _SettingPageState extends ConsumerState<SettingPage> {
             ),
 
             const SizedBox(height: 5),
+
+            IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => ConfirmDialog(
+                    content: "Bạn có chắc chắn muốn xóa tài khoản này không? Thao tác không thể hoàn tác.",
+                    onConfirm: () async {
+                      final userId = ref.read(userProvider)!.id;
+                      print("🧨 Gọi xóa tài khoản userId: $userId");
+
+                      await _authController.deleteUserAccount(
+                        context: context,
+                        userId: userId,
+                        ref: ref,
+                      );
+                    },
+                    onCancel: () {},
+                  ),
+                );
+              },
+              icon: const Icon(Icons.delete, color: Colors.red),
+            ),
+
           ],
         ),
       ),

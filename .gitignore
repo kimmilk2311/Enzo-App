@@ -45,6 +45,7 @@ BE/.env
 **/android/**/GeneratedPluginRegistrant.java
 **/android/local.properties
 **/android/key.properties
+**/android/local.properties
 
 # iOS
 **/ios/Pods/

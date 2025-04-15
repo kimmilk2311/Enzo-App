@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:multi_store/provider/delivered_order_count_provider.dart';
+import 'package:multi_store/ui/authentication/verify/otp_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../global_variables.dart';
 import '../provider/user_provider.dart';
@@ -96,7 +97,7 @@ class AuthController {
           if (!context.mounted) return;
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
+            MaterialPageRoute(builder: (context) => LoginPage()),
           );
           showSnackBar(context, "Tài khoản đã được tạo");
         },
@@ -145,7 +146,7 @@ class AuthController {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const MainPage()),
-                (route) => false,
+            (route) => false,
           );
         },
       );
@@ -174,7 +175,7 @@ class AuthController {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
-            (route) => false,
+        (route) => false,
       );
 
       showSnackBar(context, "Đăng xuất thành công");
@@ -217,5 +218,89 @@ class AuthController {
         showSnackBar(context, "Lỗi cập nhật địa chỉ");
       }
     }
+
+    // xac thuc tai khoan
+    Future<void> verifyOtp({
+      required BuildContext context,
+      required String email,
+      required String otp,
+    }) async {
+      try {
+        http.Response response = await http.post(
+          Uri.parse('$uri/api/verify-otp'),
+          body: jsonEncode({
+            'email': email,
+            'otp': otp,
+          }),
+          headers: <String, String>{"Content-Type": 'application/json; charset=UTF-8'},
+        );
+        manageHttpResponse(
+          response: response,
+          context: context,
+          onSuccess: () {
+           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context){
+             return const LoginPage();
+           }),(route)=> false);
+           showSnackBar(context, "Xác thực thành công. Đăng nhập ngay");
+          }
+
+        );
+      } catch (e) {
+        showSnackBar(context, "Lỗi xac thực OTP: $e");
+      }
+    }
   }
+
+  Future<void> deleteUserAccount({
+    required BuildContext context,
+    required String userId,
+    required WidgetRef ref,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+      print("🔐 Token: $token");
+
+      final response = await http.delete(
+        Uri.parse('$uri/api/user/$userId'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token ?? '',
+        },
+      );
+
+      print("📡 DELETE status: ${response.statusCode}");
+      print("📦 Response body: ${response.body}");
+
+      if (!context.mounted) return;
+
+      manageHttpResponse(
+        response: response,
+        context: context,
+        onSuccess: () async {
+          await prefs.remove('auth_token');
+          await prefs.remove('user');
+
+          ref.read(userProvider.notifier).signOut();
+          ref.read(deliveredOrderCountProvider.notifier).resetCount();
+
+          if (!context.mounted) return;
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+                (route) => false,
+          );
+
+          showSnackBar(context, "Tài khoản đã được xóa thành công");
+        },
+      );
+    } catch (e) {
+      if (context.mounted) {
+        showSnackBar(context, "Lỗi khi xóa tài khoản: ${e.toString()}");
+      }
+    }
+  }
+
+
 }
