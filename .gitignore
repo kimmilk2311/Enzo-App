@@ -15,7 +15,7 @@
 # ====================================
 BE/node_modules/
 BE/.env
-BE/.DS_Store
+
 
 # ====================================
 # FLUTTER PROJECTS
@@ -43,6 +43,8 @@ BE/.DS_Store
 **/android/captures/
 **/android/key.properties
 **/android/**/GeneratedPluginRegistrant.java
+**/android/local.properties
+**/android/key.properties
 
 # iOS
 **/ios/Pods/
@@ -84,3 +86,5 @@ BE/.DS_Store
 *.swo
 *.bak
 *.orig
+
+
