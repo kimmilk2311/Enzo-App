@@ -1,0 +1,86 @@
+# ====================================
+# GLOBAL IGNORE
+# ====================================
+.DS_Store
+.env
+*.log
+*.lock
+*.bak
+*.tmp
+*.swp
+*.iml
+
+# ====================================
+# NODE.JS - BE/
+# ====================================
+BE/node_modules/
+BE/.env
+BE/.DS_Store
+
+# ====================================
+# FLUTTER PROJECTS
+# Applies to: admin_panel/, user_app/, vendor_store/
+# ====================================
+**/.dart_tool/
+**/.packages
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/build/
+**/pubspec.lock
+**/generated_plugin_registrant.dart
+**/coverage/
+**/flutter_*.png
+**/linked_*.ds
+**/unlinked*.ds
+
+# Android
+**/android/.gradle/
+**/android/.idea/
+**/android/local.properties
+**/android/gradle-wrapper.jar
+**/android/gradlew
+**/android/gradlew.bat
+**/android/captures/
+**/android/key.properties
+**/android/**/GeneratedPluginRegistrant.java
+
+# iOS
+**/ios/Pods/
+**/ios/Flutter/
+**/ios/Runner.xcworkspace/
+**/ios/Runner.xcodeproj/project.xcworkspace/
+**/ios/Runner.xcodeproj/xcuserdata/
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# macOS
+**/macos/Flutter/
+**/macos/Pods/
+**/macos/Runner.xcworkspace/
+**/macos/Runner.xcodeproj/project.xcworkspace/
+**/macos/Runner.xcodeproj/xcuserdata/
+
+# Windows
+**/windows/flutter/ephemeral/
+**/windows/flutter/generated_plugin_registrant.*
+
+# Linux
+**/linux/flutter/ephemeral/
+**/linux/flutter/generated_plugin_registrant.*
+
+# ====================================
+# IDEs
+# ====================================
+.idea/
+.vscode/
+*.iws
+*.ipr
+*.class
+
+# ====================================
+# BACKUP files / SYSTEM files
+# ====================================
+*.tmp
+*.swp
+*.swo
+*.bak
+*.orig
