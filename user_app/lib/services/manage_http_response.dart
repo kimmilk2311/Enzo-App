@@ -9,6 +9,19 @@ void manageHttpResponse({
   required BuildContext context,
   required VoidCallback onSuccess,
 }) {
+  // ĐOẠN DEBUG THÊM VÀO
+  print('=========== DEBUG SERVER RESPONSE ===========');
+  print('Status Code: ${response.statusCode}');
+  print('Raw Body: ${response.body}');
+  try {
+    final decoded = json.decode(response.body);
+    print('Decoded JSON: $decoded');
+  } catch (e) {
+    print('Lỗi decode JSON: $e');
+  }
+  print('=============================================');
+
+  // XỬ LÝ RESPONSE NHƯ CŨ
   switch (response.statusCode) {
     case 200:
     case 201:
@@ -81,6 +94,7 @@ void manageHttpResponse({
       showSnackBar(context, errorMessage);
   }
 }
+
 
 
 void showSnackBar(BuildContext context, String title) {

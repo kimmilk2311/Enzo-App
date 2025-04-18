@@ -3,12 +3,18 @@ const Vendor = require('../models/vendor');
 const VendorRouter = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 const { auth,vendorAuth } = require('..//middlewares/auth');
 
 // Signup API
-VendorRouter.post('/api/vendor/signup', async (req, res) => {
+VendorRouter.post('/api/v2/vendor/signup', async (req, res) => {
   try {
-    const { fullName, email, phone, password, image, address } = req.body;
+    const { fullName, email, phone, password, storeName, storeImage, storeDescription , address =""} = req.body;
+
+    const  exitstingUserEmail = await User.findOne({ email });
+    if (exitstingUserEmail) {
+      return res.status(400).json({ msg: "Email này đã được sử dụng" });
+    }
 
     const existingEmail = await Vendor.findOne({ email });
     if (existingEmail) {
@@ -22,9 +28,11 @@ VendorRouter.post('/api/vendor/signup', async (req, res) => {
       fullName,
       email,
       phone,
-      image: image || "",
       address: address || "",
       password: hashedPassword,
+      storeName,
+      storeImage,
+      storeDescription,
     });
 
     vendor = await vendor.save();
@@ -36,9 +44,9 @@ VendorRouter.post('/api/vendor/signup', async (req, res) => {
 });
 
 // Login API 
-VendorRouter.post('/api/vendor/signin', async (req, res) => {
+VendorRouter.post('/api/v2/vendor/signin', async (req, res) => {
   try {
-    const { loginInput } = req.body;
+    const { loginInput, password } = req.body;
 
     // Tìm vendor theo email hoặc số điện thoại
     const vendor = await Vendor.findOne({
@@ -46,18 +54,62 @@ VendorRouter.post('/api/vendor/signin', async (req, res) => {
     });
 
     if (!vendor) {
-      return res.status(400).json({ msg: "Tài khoản không tồn tại." });
+      return res.status(400).json({ msg: "Không tìm thấy tài khoản." });
     }
 
-    // Tạo token
-    const token = jwt.sign({ id: vendor._id }, "passwordKey", { expiresIn: "1d" });
+    const isMatch = await bcrypt.compare(password, vendor.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Sai mật khẩu." });
+    }
 
-    res.json({ token, vendor: { id: vendor._id, email: vendor.email, phone: vendor.phone, fullName: vendor.fullName, role: vendor.role } });
+    // Xóa password khỏi object trả về
+    const { password: _, ...vendorWithoutPassword } = vendor._doc;
+
+    // Tạo token
+    const token = jwt.sign({ id: vendor._id }, "passwordKey", { expiresIn: "1m" });
+
+    res.json({ token,vendorWithoutPassword });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
+// API KIỂM TRA TOKEN 
+VendorRouter.post('/api/vendor-tokenIsValid', async (req, res) => {
+  try {
+    const token = req.header("x-auth-token");
+    if (!token) return res.json(false);
+
+    const verified = jwt.verify(token, "passwordKey");
+    if (!verified) return res.json(false);
+
+    const vendor = await Vendor.findById(verified.id);
+    if (!vendor) return res.json(false);
+
+    return res.json(true);
+  } catch (e) {
+    console.log("❌ Lỗi xác thực token:", e);
+    return res.status(500).json({
+      error: "Đã xảy ra lỗi trong quá trình xác thực token. Vui lòng thử lại sau.",
+    });
+  }
+});
+
+// Xác định một tuyến đường lấy cho roter xác thực
+VendorRouter.get('/get-vendor', auth, async(req, res) => {
+  try {
+  
+    const vendor = await Vendor.findById(req.user); 
+  
+   return  res.json({...vendor._doc, token: req.token}); // Trả về thông tin người dùng và token
+    
+  } catch (e) {
+    console.error("❌ Lỗi xác thực:", e);
+    return res.status(500).json({ error: "Đã xảy ra lỗi trong quá trình xác thực. Vui lòng thử lại sau." });  
+    
+  }
+  
+  });
 
 // ✅ API lấy thông tin Vendor từ token
 VendorRouter.get('/api/vendor/profile', auth, vendorAuth , async (req, res) => {

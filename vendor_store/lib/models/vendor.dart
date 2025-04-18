@@ -9,6 +9,7 @@ class Vendor {
   final String address;
   final String role;
   final String password;
+  final String token;
 
   Vendor({
     required this.id,
@@ -19,6 +20,7 @@ class Vendor {
     required this.address,
     required this.role,
     required this.password,
+    required this.token,
   });
 
   // Chuyển đổi từ Object sang Map (Gửi API)
@@ -32,6 +34,7 @@ class Vendor {
       'address': address,
       'role': role,
       'password': password,
+      'token':token,
     };
   }
 
@@ -49,6 +52,8 @@ class Vendor {
       address: map['address'] as String? ?? '',
       role: map['role'] as String? ?? '',
       password: map['password'] as String? ?? '',
+      token: map['token'] as String? ?? '',
+
     );
   }
 

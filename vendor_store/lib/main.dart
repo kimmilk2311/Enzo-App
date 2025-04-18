@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vendor_store/controllers/vendor_auth_controller.dart';
 import 'package:vendor_store/provider/vendor_provider.dart';
 import 'package:vendor_store/views/screens/authentication/login_page.dart';
 import 'package:vendor_store/views/screens/authentication/main_vendor_page.dart';
-import 'package:vendor_store/views/screens/authentication/register_page.dart';
 
 void main() {
   runApp( const ProviderScope(child:  MyApp()));
@@ -17,22 +16,9 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    Future<void> checkTokenAndSetUser(WidgetRef ref) async {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String? token = preferences.getString('auth_token');
-      String? vendorJson = preferences.getString('vendor');
-      String? vendorId = preferences.getString('vendorId');
-
-      print("Token từ SharedPreferences: $token");
-      print("Vendor JSON từ SharedPreferences: $vendorJson");
-      print("Vendor ID từ SharedPreferences: $vendorId");
-
-      if (token != null && vendorJson != null && vendorId != null) {
-        ref.read(vendorProvider.notifier).setVendor(vendorJson);
-        print("Vendor sau khi thiết lập: ${ref.read(vendorProvider)}");
-      } else {
-        ref.read(vendorProvider.notifier).signOut();
-      }
+    Future<void> checkTokenAndSetUser(WidgetRef ref, context) async {
+     await VendorAuthController().getUserData(context, ref);
+     ref.watch(vendorProvider);
     }
 
 
@@ -41,15 +27,17 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: FutureBuilder(future: checkTokenAndSetUser(ref), builder: (context, snapshot){
-        if(snapshot.connectionState==ConnectionState.waiting){
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        final vendor = ref.watch(vendorProvider);
-        return vendor != null? const MainVendorPage(): const  LoginPage();
-      }),
+      home: Material(
+        child: FutureBuilder(future: checkTokenAndSetUser(ref,context), builder: (context, snapshot){
+          if(snapshot.connectionState==ConnectionState.waiting){
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          final vendor = ref.watch(vendorProvider);
+          return vendor!.token.isNotEmpty?const MainVendorPage():const LoginPage();
+        }),
+      ),
     );
   }
 }

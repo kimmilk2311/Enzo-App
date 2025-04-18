@@ -68,5 +68,11 @@ class FavoriteNotifier extends StateNotifier<Map<String, Favorite>> {
     _saveFavorites();
   }
 
+  void resetFavorites() async {
+    state = {};
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('favorites');
+  }
+
   Map<String, Favorite> get getFavortiteItems => state;
 }

@@ -29,7 +29,7 @@ class SplashController extends BaseController {
     if (LocalData.shared.isLogged.isTrue) {
       Get.offAllNamed(PageName.mainPage);
     } else {
-      Get.offAllNamed(PageName.mainPage);
+      Get.offAllNamed(PageName.startedPage);
     }
   }
 }

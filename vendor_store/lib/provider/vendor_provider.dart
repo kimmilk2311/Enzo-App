@@ -14,6 +14,7 @@ class VendorProvider extends StateNotifier<Vendor?> {
     image: '',
     role: '',
     password: '',
+    token: '',
   ));
 
   // Getter lấy thông tin vendor hiện tại

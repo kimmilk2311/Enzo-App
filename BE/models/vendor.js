@@ -30,17 +30,27 @@ const vendorSchema = mongoose.Schema({
     },
   },
 
-  image: {
-    type: String,
-    required: false,
-    default: "",
-  },
 
   address: {
     type: String,
     default: "",
     trim: true,
   },
+
+
+  storeName:{
+    type:String,
+    required:true,
+  },
+  storeImage:{
+    type:String,
+    required:true,
+  },
+  storeDescription:{
+    type:String,
+    required:true,
+  },
+
 
   password: {
     type: String,

@@ -383,29 +383,26 @@ class _SettingPageState extends ConsumerState<SettingPage> {
               ),
             ),
 
-            const SizedBox(height: 5),
 
-            IconButton(
-              onPressed: () {
+            const SizedBox(height: 5),
+            ListTile(
+              onTap: () {
                 showDialog(
                   context: context,
                   builder: (context) => ConfirmDialog(
-                    content: "Bạn có chắc chắn muốn xóa tài khoản này không? Thao tác không thể hoàn tác.",
+                    content: "Bạn có chắc chắn muốn xóa tài khoản không?",
                     onConfirm: () async {
-                      final userId = ref.read(userProvider)!.id;
-                      print("🧨 Gọi xóa tài khoản userId: $userId");
-
-                      await _authController.deleteUserAccount(
-                        context: context,
-                        userId: userId,
-                        ref: ref,
-                      );
+                      await _authController.deleteAccount(context: context, id: user.id, ref: ref );
                     },
                     onCancel: () {},
                   ),
                 );
               },
-              icon: const Icon(Icons.delete, color: Colors.red),
+              leading: const Icon(Icons.delete),
+              title: Text(
+                "Xóa tài khoản",
+                style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
+              ),
             ),
 
           ],

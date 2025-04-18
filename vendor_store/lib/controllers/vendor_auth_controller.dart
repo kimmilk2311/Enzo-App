@@ -32,7 +32,7 @@ class VendorAuthController {
       });
 
       final response = await http.post(
-        Uri.parse('$uri/api/vendor/signup'),
+        Uri.parse('$uri/api/v2/vendor/signup'),
         body: requestBody,
         headers: {"Content-Type": 'application/json; charset=UTF-8'},
       );
@@ -54,12 +54,12 @@ class VendorAuthController {
   Future<void> signInVendor({
     required BuildContext context,
     required String loginInput,
-      required String password,
-      required WidgetRef ref, // ✅ Thêm tham số này để cập nhật Provider
+    required String password,
+    required WidgetRef ref,
   }) async {
     try {
       final response = await http.post(
-        Uri.parse("$uri/api/vendor/signin"),
+        Uri.parse("$uri/api/v2/vendor/signin"),
         body: jsonEncode({"loginInput": loginInput, "password": password}),
         headers: {"Content-Type": 'application/json; charset=UTF-8'},
       );
@@ -68,31 +68,26 @@ class VendorAuthController {
         response: response,
         context: context,
         onSuccess: () async {
-          final data = jsonDecode(response.body);
-          final String token = data['token'];
-          final vendorData = data['vendor'];
-          final String vendorId = vendorData['id'] ?? vendorData['_id']; // ✅ Lấy đúng `vendorId`
+          final prefs = await SharedPreferences.getInstance();
 
-          SharedPreferences prefs = await SharedPreferences.getInstance();
+          String token = jsonDecode(response.body)['token'];
 
-          // ✅ Xóa toàn bộ dữ liệu cũ trước khi lưu dữ liệu mới
-          await prefs.remove('auth_token');
-          await prefs.remove('vendor');
-          await prefs.remove('vendorId');
-
-          // ✅ Lưu dữ liệu mới
           await prefs.setString('auth_token', token);
-          await prefs.setString('vendor', jsonEncode(vendorData));
-          await prefs.setString('vendorId', vendorId);
 
-          // ✅ Cập nhật Provider với dữ liệu mới
-          ref.read(vendorProvider.notifier).setVendor(jsonEncode(vendorData));
+          final userJson = jsonEncode(jsonDecode(response.body));
 
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const MainVendorPage()),
-                (route) => false,
-          );
+          ref.read(vendorProvider.notifier).setVendor(response.body);
+
+          await prefs.setString('user', userJson);
+
+          if (ref.read(vendorProvider)?.token.isNotEmpty == true) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainVendorPage()),
+                  (route) => false,
+            );
+            showSnackBar(context, "Đăng nhập thành công");
+          }
         },
       );
     } catch (e) {
@@ -100,6 +95,39 @@ class VendorAuthController {
     }
   }
 
+  getUserData(context, WidgetRef ref) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+
+      String? token = preferences.getString('auth_token');
+
+      if (token == null) {
+        preferences.setString('auth_token', '');
+      }
+
+      var tokenResponse = await http.post(
+        Uri.parse('$uri/api/vendor-tokenIsValid'),
+        headers: {
+          "Content-Type": 'application/json; charset=UTF-8',
+          'x-auth-token': token!,
+        },
+      );
+      var response = jsonDecode(tokenResponse.body);
+      if (response == true) {
+        http.Response userResponse = await http.get(
+          Uri.parse('$uri/get-vendor'),
+          headers: {
+            "Content-Type": 'application/json; charset=UTF-8',
+            'x-auth-token': token,
+          },
+        );
+        ref.read(vendorProvider.notifier).setVendor(userResponse.body);
+
+      }
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
 
   // ✅ Đăng xuất Vendor
   Future<void> signOutVendor({required BuildContext context}) async {
