@@ -4,6 +4,7 @@ const VendorRouter = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+
 const { auth,vendorAuth } = require('..//middlewares/auth');
 
 // Signup API

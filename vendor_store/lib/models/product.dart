@@ -11,6 +11,8 @@ class Product {
   final String fullName;
   final String subCategory;
   final List<String> images;
+  final double? averageRating;
+  final int? totalRatings;
 
   Product({
     required this.id,
@@ -23,6 +25,8 @@ class Product {
     required this.fullName,
     required this.subCategory,
     required this.images,
+    required this.averageRating,
+    required this.totalRatings,
   });
 
   // Chuyển đổi từ Object sang Map (Gửi API)
@@ -38,6 +42,8 @@ class Product {
       'fullName': fullName,
       'subCategory': subCategory,
       'images': images,
+      'averageRating': averageRating,
+      'totalRatings': totalRatings,
     };
   }
 
@@ -45,7 +51,7 @@ class Product {
   String toJson() => json.encode(toMap());
 
   // Chuyển đổi từ Map sang Object (Nhận API)
-  factory Product.fromJson(Map<String, dynamic> map) {
+  factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
       id: map['_id'] as String? ?? '',
       productName: map['productName'] as String? ?? '',
@@ -57,6 +63,9 @@ class Product {
       fullName: map['fullName'] as String? ?? '',
       subCategory: map['subCategory'] as String? ?? '',
       images: (map['images'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+      averageRating:
+      (map['averageRating'] is int ? (map['averageRating'] as int).toDouble() : map['averageRating'] as double),
+      totalRatings: map['totalRatings'] as int,
     );
   }
 }

@@ -2,6 +2,7 @@ const express = require('express');
 const Product = require('../models/product');
 const {auth,vendorAuth} = require('../middlewares/auth');
 const mongoose = require('mongoose');
+const Vendor = require('../models/vendor');
 const subCategory = require('../models/sub_category');
 
 const productRouter = express.Router();
@@ -189,5 +190,24 @@ productRouter.put('/api/edit-product/:productId', auth, vendorAuth, async (req, 
     }
 });
 
+
+// fetch products by vendor id
+productRouter.get('/api/products/vendor/:vendorId',auth,vendorAuth,async(req,res)=>{
+    try {
+      const { vendorId } = req.params;
+
+      const vendorExists = await Vendor.findById(vendorId); 
+      if(!vendorExists) {
+        return res.status(404).json({ msg: "Không tìm thấy vendor" });
+      }
+      const products = await Product.find({ vendorId });
+
+      res.status(200).json(products);
+    
+  } catch (e) {
+    return res.status(500).json({ error: e.message });  
+  }
+   
+  });
 
 module.exports = productRouter;

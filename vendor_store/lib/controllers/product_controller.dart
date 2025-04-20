@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:cloudinary_public/cloudinary_public.dart';
@@ -19,18 +20,17 @@ class ProductController {
     required List<File>? pickedImages,
     required context,
   }) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String? token = sharedPreferences.getString("auth_token");
-    String? storedVendorId = sharedPreferences.getString("vendorId");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("auth_token");
+    String? storedVendorId = prefs.getString("vendorId");
 
-    // ✅ Lấy vendorId từ SharedPreferences nếu không có từ tham số
     if (vendorId.isEmpty && (storedVendorId == null || storedVendorId.isEmpty)) {
       showSnackBar(context, 'Không tìm thấy vendorId.');
       print("Không tìm thấy vendorId.");
       return;
     }
 
-    final finalVendorId = vendorId.isEmpty ? storedVendorId : vendorId;
+    final finalVendorId = vendorId.isNotEmpty ? vendorId : storedVendorId!;
 
     try {
       if (pickedImages == null || pickedImages.isEmpty) {
@@ -53,17 +53,20 @@ class ProductController {
         }
       }
 
-      final Product product = Product(
+      final product = Product(
         id: '',
         productName: productName,
         productPrice: productPrice,
         quantity: quantity,
         description: description,
         category: category,
-        vendorId: finalVendorId!,
+        vendorId: finalVendorId,
         fullName: fullName,
         subCategory: subCategory,
         images: images,
+        averageRating: 0.0,
+        // ✅ default rating
+        totalRatings: 0, // ✅ default rating count
       );
 
       final response = await http.post(
@@ -84,6 +87,33 @@ class ProductController {
       );
     } catch (e) {
       showSnackBar(context, "Đã xảy ra lỗi, vui lòng thử lại: $e");
+    }
+  }
+
+  // load product by category function
+  Future<List<Product>> loadVendorProduct(String vendorId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("auth_token");
+
+      http.Response response = await http.get(
+        Uri.parse('$uri/api/products/vendor/$vendorId'),
+        headers: {
+          "Content-Type": 'application/json; charset=UTF-8',
+          'x-auth-token': token!,
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+        List<Product> vendorProducts = data.map((product) => Product.fromMap(product as Map<String, dynamic>)).toList();
+        return vendorProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Không tải được các sản phẩm");
+      }
+    } catch (e) {
+      throw Exception("Lỗi tải sản phẩm: $e");
     }
   }
 }
