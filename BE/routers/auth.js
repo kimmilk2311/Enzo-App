@@ -90,7 +90,7 @@ authRouter.post('/api/signin', async (req, res) => {
       return res.status(400).json({ msg: "Mật khẩu không đúng" });
     }
 
-    const token = jwt.sign({ id: findUser._id }, "passwordKey",{ expiresIn: "1m" });
+    const token = jwt.sign({ id: findUser._id }, "passwordKey",{ expiresIn: "1d" });
 
     const { password: _, ...userWithoutPassword } = findUser._doc;
 

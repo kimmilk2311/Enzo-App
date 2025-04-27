@@ -14,9 +14,8 @@ class OrderController {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? token = preferences.getString('auth_token') ?? '';
 
-
-      http.Response response = await http.get(
-        Uri.parse('$uri/api/orders/$vendorId'),
+      final response = await http.get(
+        Uri.parse('$uri/api/orders/vendor/$vendorId'),
         headers: {
           "Content-Type": 'application/json; charset=UTF-8',
           'x-auth-token': token,
@@ -24,9 +23,14 @@ class OrderController {
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body);
-        List<Order> orders = data.map((order) => Order.fromJson(order)).toList();
-        return orders;
+        final body = jsonDecode(response.body);
+        if (body is List) {
+          List<Order> orders = body.map((order) => Order.fromJson(order)).toList();
+          return orders;
+        } else {
+          print('Server báo không có đơn: ${body['msg']}');
+          return [];
+        }
       } else {
         print('Lỗi từ server: ${response.body}');
         throw Exception("Không tải được đơn đặt hàng");
@@ -36,6 +40,7 @@ class OrderController {
       throw Exception("Lỗi tải đơn đặt hàng");
     }
   }
+
 
   // Xoa don hang
   Future<void> deleteOrder({required String id, required context}) async {

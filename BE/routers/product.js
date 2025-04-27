@@ -8,7 +8,7 @@ const subCategory = require('../models/sub_category');
 const productRouter = express.Router();
 
 // API thêm sản phẩm mới
-productRouter.post('/api/add-products', auth, vendorAuth,async (req, res) => {
+productRouter.post('/api/add-products',async (req, res) => {
     try {
         const { productName, productPrice, quantity, description, category,vendorId, fullName, subCategory, images } = req.body;
 
@@ -165,34 +165,38 @@ productRouter.get('/api/search-products', async (req, res) => {
     }
 });
 
-// chỉnh sửa sản phẩm theo productId
-productRouter.put('/api/edit-product/:productId', auth, vendorAuth, async (req, res) => {
-    try {
-        const { productId } = req.params;
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).json({ msg: "Không tìm thấy sản phẩm" });
-        }
-        if (product.vendorId.toString() !== req.user.id) {
-          return res.status(403).json({ msg: "Bạn không có quyền sửa sản phẩm này" });
-      }
-      
-        const {vendorId, ...updateData} = req.body;
+productRouter.put('/api/edit-product/:productId', async (req, res) => {
+  try {
+      const { productId } = req.params;
 
-     const updatedProduct =   await Product.findByIdAndUpdate(
+      // Kiểm tra xem sản phẩm có tồn tại trong cơ sở dữ liệu không
+      const product = await Product.findById(productId);
+      if (!product) {
+          return res.status(404).json({ msg: "Không tìm thấy sản phẩm" });
+      }
+
+      // Lấy dữ liệu cần cập nhật từ req.body và loại bỏ vendorId (nếu có)
+      const { vendorId, ...updateData } = req.body;
+
+      // Cập nhật sản phẩm với dữ liệu mới
+      const updatedProduct = await Product.findByIdAndUpdate(
           productId, 
-          {$set:updateData}, 
+          { $set: updateData }, 
           { new: true }
-        );
-        res.status(200).json(updatedProduct);
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
+      );
+
+      // Trả về sản phẩm đã cập nhật
+      res.status(200).json(updatedProduct);
+  } catch (e) {
+      // Lỗi server
+      res.status(500).json({ error: e.message });
+  }
 });
 
 
+
 // fetch products by vendor id
-productRouter.get('/api/products/vendor/:vendorId',auth,vendorAuth,async(req,res)=>{
+productRouter.get('/api/products/vendor/:vendorId',async(req,res)=>{
     try {
       const { vendorId } = req.params;
 

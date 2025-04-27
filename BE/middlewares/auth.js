@@ -31,15 +31,27 @@ const auth = async (req, res, next) => {
 
 // vendor authentioncation middleware
 const vendorAuth = async (req, res, next) => {
- try {
-    if(!req.user.role || req.user.role !== "vendor"){
-        return res.status(403).json({msg:"Người dùng không phải là nhà cung cấp"});
-      }
-      next();
- } catch (error) {
-    res.status(500).json({ error: error.message });
+  try {
+    const token = req.header('x-auth-token');
+    if (!token) {
+      return res.status(401).json({ msg: 'No token, authorization denied' });
+    }
+
+    const verified = jwt.verify(token, 'passwordKey'); // 'passwordKey' là key của bạn
+    if (!verified) {
+      return res.status(401).json({ msg: 'Token verification failed' });
+    }
+
+    // Kiểm tra role có phải là 'vendor' không
+    if (verified.role !== 'vendor') {
+      return res.status(403).json({ msg: 'You are not authorized as a vendor' });
+    }
+
+    req.user = verified; // Gán thông tin user vào request
+    next();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-    
- };
+};
 
  module.exports = {auth, vendorAuth};

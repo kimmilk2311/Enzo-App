@@ -67,7 +67,7 @@ VendorRouter.post('/api/v2/vendor/signin', async (req, res) => {
     const { password: _, ...vendorWithoutPassword } = vendor._doc;
 
     // Tạo token
-    const token = jwt.sign({ id: vendor._id }, "passwordKey", { expiresIn: "1m" });
+    const token = jwt.sign({ id: vendor._id }, "passwordKey", { expiresIn: "1d" });
 
     res.json({ token,vendorWithoutPassword });
   } catch (e) {

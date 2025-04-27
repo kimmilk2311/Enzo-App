@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -115,5 +116,49 @@ class ProductController {
     } catch (e) {
       throw Exception("Lỗi tải sản phẩm: $e");
     }
+  }
+
+  Future<List<String>> uploadImagesToCloudinary(List<File>? pickedImages, Product product) async {
+    final cloudinary = CloudinaryPublic("dajwnmjjf", "tb9fytch");
+    List<String> uploadedImages = [];
+
+    for (var image in pickedImages!) {
+     CloudinaryResponse cloudinaryResponse = await cloudinary.uploadFile(
+        CloudinaryFile.fromFile(image.path, folder: product.productName),
+      );
+      uploadedImages.add(cloudinaryResponse.secureUrl);
+    }
+    return uploadedImages;
+  }
+
+  Future<void> updateProduct({
+    required Product product,
+    required List<File>? pickedImages,
+    required BuildContext context,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("auth_token");
+
+    if (pickedImages != null) {
+      await uploadImagesToCloudinary(pickedImages, product);
+    }
+    final updateDateData = product.toMap();
+
+    http.Response response = await http.put(
+      Uri.parse('$uri/api/edit-product/${product.id}'),
+      body: jsonEncode(updateDateData),
+      headers: {
+        "Content-Type": 'application/json; charset=UTF-8',
+        'x-auth-token': token!,
+      },
+    );
+
+    manageHttpResponse(
+      response: response,
+      context: context,
+      onSuccess: () {
+        showSnackBar(context, "Cập nhật sản phẩm thành công");
+      },
+    );
   }
 }

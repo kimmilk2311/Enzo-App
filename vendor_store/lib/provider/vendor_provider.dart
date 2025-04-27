@@ -34,8 +34,19 @@ class VendorProvider extends StateNotifier<Vendor?> {
 
   // Phương thức chuyển trạng thái vendor về null khi đăng xuất
   void signOut() {
-    state = null;
+    state = Vendor(
+      id: '',
+      fullName: '',
+      email: '',
+      phone: '',
+      address: '',
+      image: '',
+      role: '',
+      password: '',
+      token: '',
+    );
   }
+
 }
 
 // Provider cho VendorProvider
