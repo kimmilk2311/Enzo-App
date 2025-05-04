@@ -15,6 +15,8 @@ class VendorProvider extends StateNotifier<Vendor?> {
     role: '',
     password: '',
     token: '',
+    storeImage: '',
+    storeDescription: '',
   ));
 
   // Getter lấy thông tin vendor hiện tại
@@ -44,10 +46,14 @@ class VendorProvider extends StateNotifier<Vendor?> {
       role: '',
       password: '',
       token: '',
+      storeImage: '',
+      storeDescription: '',
     );
   }
 
 }
+
+
 
 // Provider cho VendorProvider
 final vendorProvider = StateNotifierProvider<VendorProvider, Vendor?>((ref) {

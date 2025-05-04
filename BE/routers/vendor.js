@@ -138,5 +138,32 @@ VendorRouter.get('/api/vendors',async(req,res)=>{
   }
 });
 
+// ✅ API cập nhật người dùng
+VendorRouter.put('/api/vendor/update/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { storeImage, storeDescription } = req.body;
+
+    const updatedUser = await Vendor.findByIdAndUpdate(
+      id,
+      { storeImage, storeDescription },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ msg: "Không tìm thấy người dùng" });
+    }
+
+    const { password, ...userWithoutPassword } = updatedUser._doc;
+
+    return res.json({
+      msg: "Cập nhật thông tin thành công",
+      user: userWithoutPassword,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: "Lỗi cập nhật thông tin: " + error.message });
+  }
+});
+
 
 module.exports = VendorRouter;

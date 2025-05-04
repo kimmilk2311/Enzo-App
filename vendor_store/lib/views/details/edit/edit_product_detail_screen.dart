@@ -80,6 +80,7 @@ class _EditProductDetailScreenState extends State<EditProductDetailScreen> {
           "Chỉnh sửa sản phẩm",
           style: AppStyles.STYLE_20_BOLD.copyWith(color: Colors.white),
         ),
+        centerTitle: true,
         backgroundColor: AppColors.bluePrimary,
         automaticallyImplyLeading: false,
       ),

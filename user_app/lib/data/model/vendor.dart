@@ -23,7 +23,7 @@ class Vendor {
     required this.role,
     required this.password,
     required this.token,
-     this.storeImage,
+    this.storeImage,
     this.storeDescription,
   });
 

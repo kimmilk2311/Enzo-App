@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +12,6 @@ import '../views/screens/authentication/login_page.dart';
 import '../views/screens/authentication/main_vendor_page.dart';
 
 class VendorAuthController {
-
   // ✅ Đăng ký Vendor
   Future<void> signUpVendor({
     required BuildContext context,
@@ -84,7 +85,7 @@ class VendorAuthController {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const MainVendorPage()),
-                  (route) => false,
+              (route) => false,
             );
             showSnackBar(context, "Đăng nhập thành công");
           }
@@ -122,7 +123,6 @@ class VendorAuthController {
           },
         );
         ref.read(vendorProvider.notifier).setVendor(userResponse.body);
-
       }
     } catch (e) {
       showSnackBar(context, e.toString());
@@ -140,12 +140,54 @@ class VendorAuthController {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
-            (route) => false,
+        (route) => false,
       );
 
       showSnackBar(context, "Đăng xuất thành công");
     } catch (e) {
       showSnackBar(context, "Lỗi khi đăng xuất");
+    }
+  }
+
+  // ✅ 5. Cập nhật địa chỉ người dùng
+  Future<void> updateVendorData({
+    required BuildContext context,
+    required String id,
+    required File? storeImage,
+    required String storeDescription,
+    required WidgetRef ref,
+  }) async {
+    try {
+      final cloudinary = CloudinaryPublic("dajwnmjjf", "tb9fytch");
+      CloudinaryResponse imageResponse = await cloudinary
+          .uploadFile(CloudinaryFile.fromFile(storeImage!.path, identifier: "pickedImage", folder: "storeImage"));
+      String image = imageResponse.secureUrl;
+
+      final response = await http.put(
+        Uri.parse('$uri/api/vendor/update/$id'),
+        headers: {"Content-Type": 'application/json; charset=UTF-8'},
+        body: jsonEncode({
+          'storeImage': image,
+          'storeDescription': storeDescription,
+        }),
+      );
+
+      if (!context.mounted) return;
+
+      manageHttpResponse(
+        response: response,
+        context: context,
+        onSuccess: () async {
+          final updatedUser = jsonDecode(response.body);
+          final userJson = jsonEncode(updatedUser);
+          ref.read(vendorProvider.notifier).setVendor(userJson);
+          showSnackBar(context, "Cập nhật thành công");
+        },
+      );
+    } catch (e) {
+      if (context.mounted) {
+        showSnackBar(context, "Lỗi cập nhật địa chỉ");
+      }
     }
   }
 }

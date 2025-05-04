@@ -13,6 +13,7 @@ import 'package:multi_store/provider/favorite_provider.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
 import 'package:multi_store/services/manage_http_response.dart';
+import 'package:multi_store/ui/navigation/screens/cart_page.dart';
 import '../../../../../controller/product_controller.dart';
 import '../../../../../provider/related_product_provider.dart';
 import '../../../../../resource/asset/app_images.dart';
@@ -226,7 +227,27 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             const SizedBox(width: 5),
             AppButton(
               text: "Mua ngay",
-              onPressed: () {},
+              onPressed: () {
+                // Thêm sản phẩm vào giỏ hàng
+                cartProviderData.addProductToCart(
+                  productId: widget.product.id,
+                  productName: widget.product.productName,
+                  productPrice: widget.product.productPrice,
+                  category: widget.product.category,
+                  images: widget.product.images,
+                  vendorId: widget.product.vendorId,
+                  productQuantity: widget.product.quantity,
+                  quantity: 1,
+                  description: widget.product.id,
+                  fullName: widget.product.fullName,
+                );
+                showSnackBar(context, "${widget.product.productName} đã thêm vào giỏ hàng");
+
+                // Chuyển tới màn hình giỏ hàng
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return CartPage();
+                }));
+              },
               color: AppColors.black80,
               textColor: AppColors.white,
               height: 50,

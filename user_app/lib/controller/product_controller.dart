@@ -30,7 +30,7 @@ class ProductController {
   Future<List<Product>> loadProductByCategory(String category) async {
     try {
       http.Response response =
-          await http.get(Uri.parse('$uri/api/products-by-category/$category'), headers: <String, String>{
+      await http.get(Uri.parse('$uri/api/products-by-category/$category'), headers: <String, String>{
         "Content-Type": 'application/json; charset=UTF-8',
       });
       if (response.statusCode == 200) {
@@ -51,14 +51,14 @@ class ProductController {
   Future<List<Product>> loadRelatedProductsBySubcategory(String productId) async {
     try {
       final response =
-          await http.get(Uri.parse('$uri/api/related-products-by-subcategory/$productId'), headers: <String, String>{
+      await http.get(Uri.parse('$uri/api/related-products-by-subcategory/$productId'), headers: <String, String>{
         "Content-Type": 'application/json; charset=UTF-8',
       });
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body) as List<dynamic>;
         List<Product> relatedProducts =
-            data.map((product) => Product.fromMap(product as Map<String, dynamic>)).toList();
+        data.map((product) => Product.fromMap(product as Map<String, dynamic>)).toList();
         return relatedProducts;
       } else if (response.statusCode == 404) {
         return [];
@@ -80,7 +80,7 @@ class ProductController {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body) as List<dynamic>;
         List<Product> topRatedProducts =
-            data.map((product) => Product.fromMap(product as Map<String, dynamic>)).toList();
+        data.map((product) => Product.fromMap(product as Map<String, dynamic>)).toList();
         return topRatedProducts;
       } else if (response.statusCode == 404) {
         return [];
@@ -130,6 +130,27 @@ class ProductController {
         return [];
       } else {
         throw Exception("Không tải được danh mục con sản phẩm");
+      }
+    } catch (e) {
+      throw Exception("Lỗi tải sản phẩm: $e");
+    }
+  }
+
+  Future<List<Product>> loadVendorProducts(String vendorId) async {
+    try {
+      final response = await http.get(Uri.parse('$uri/api/products/vendor/$vendorId'), headers: <String, String>{
+        "Content-Type": 'application/json; charset=UTF-8',
+      });
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body) as List<dynamic>;
+        List<Product> vendorProducts =
+        data.map((product) => Product.fromMap(product as Map<String, dynamic>)).toList();
+        return vendorProducts;
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception("Không tải được sản phẩm nhà cung cấp");
       }
     } catch (e) {
       throw Exception("Lỗi tải sản phẩm: $e");
