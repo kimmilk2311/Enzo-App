@@ -155,7 +155,7 @@ class _VendorProductScreenState extends ConsumerState<VendorProductScreen> {
                 color: AppColors.greyDark.withOpacity(0.5),
               ),
               const SizedBox(height: 10),
-              Text("Sản phẩm của bạn",style: AppStyles.STYLE_18_BOLD.copyWith(color: AppColors.bluePrimary),),
+              Text("Sản phẩm của "+widget.vendor.fullName,style: AppStyles.STYLE_18_BOLD.copyWith(color: AppColors.bluePrimary),),
               const SizedBox(height: 20),
               isLoading
                   ? const Center(

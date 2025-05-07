@@ -10,6 +10,7 @@ import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
 import 'package:multi_store/controller/auth_controller.dart';
 import 'package:multi_store/ui/authentication/login/screen/login_page.dart';
+import 'package:dotted_border/dotted_border.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -118,15 +119,28 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                         const SizedBox(height: 20),
 
-                        GestureDetector(
-                          onTap: () => _showImagePicker(context),
-                          child: CircleAvatar(
-                            radius: 50,
-                            backgroundColor: AppColors.gold50,
-                            backgroundImage: imageFile != null ? FileImage(imageFile!) : null,
-                            child: imageFile == null
-                                ? const Icon(Icons.camera_alt, size: 40, color: Colors.blue)
-                                : null,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            onTap: () => _showImagePicker(context),
+                            child: DottedBorder(
+                              borderType: BorderType.Circle,
+                              dashPattern: const [6, 4],
+                              color: AppColors.bluePrimary,
+                              strokeWidth: 2,
+                              child: CircleAvatar(
+                                radius: 50,
+                                backgroundColor: AppColors.white40,
+                                backgroundImage: imageFile != null ? FileImage(imageFile!) : null,
+                                child: imageFile == null
+                                    ? const Icon(
+                                  Icons.camera_alt,
+                                  size: 40,
+                                  color: AppColors.bluePrimary,
+                                )
+                                    : null,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -139,13 +153,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         const SizedBox(height: 10),
                         AppTextField(
                           hintText: "Email",
-                          prefixImage: AppImages.icUser,
+                          prefixImage: AppImages.icMail,
                           onChanged: (value) => email = value,
                         ),
                         const SizedBox(height: 10),
                         AppTextField(
                           hintText: "Số điện thoại",
-                          prefixImage: AppImages.icUser,
+                          prefixImage: AppImages.icPhone,
                           onChanged: (value) => phone = value,
                         ),
                         const SizedBox(height: 10),

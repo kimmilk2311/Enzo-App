@@ -201,7 +201,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             ),
             RadioListTile(
               title: Text(
-                "Stripe",
+                "Momo",
                 style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
               ),
               value: "stripe",

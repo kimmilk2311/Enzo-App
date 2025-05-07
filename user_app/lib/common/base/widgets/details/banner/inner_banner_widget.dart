@@ -17,6 +17,7 @@ class InnerBannerWidget extends StatelessWidget {
           child: Image.network(
             image,
             fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image)),
           ),
         ),
       ),

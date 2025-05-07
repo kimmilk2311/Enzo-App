@@ -7,6 +7,8 @@ import 'package:multi_store/resource/asset/app_images.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
 
+import '../../register/screen/register_page.dart';
+
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -116,6 +118,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         },
                         color: AppColors.bluePrimary,
                         textColor: AppColors.white,
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Chưa có tài khoản?"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => const RegisterPage(),
+                              ));
+                            },
+                            child: Text(
+                              " Đăng ký ngay",
+                              style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.bluePrimary),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

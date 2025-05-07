@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:multi_store/controller/banner_controller.dart';
-import 'package:multi_store/data/model/banner_model.dart';
 import 'package:multi_store/provider/banner_provider.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
+import 'inner_banner_widget.dart';
 
 class BannerWidget extends ConsumerStatefulWidget {
   const BannerWidget({super.key});
@@ -13,31 +13,41 @@ class BannerWidget extends ConsumerStatefulWidget {
 }
 
 class _BannerWidgetState extends ConsumerState<BannerWidget> {
-  bool _isLoading = true;
+  late PageController _pageController;
+  late Timer _timer;
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadBanners();
+    _pageController = PageController(initialPage: 0);
+
+    // Thiết lập timer để tự động chuyển banner mỗi 5 giây
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_pageController.hasClients) {
+        final banners = ref.read(bannerProvider).banners;
+        if (banners.isNotEmpty) {
+          _currentPage = (_currentPage + 1) % banners.length;
+          _pageController.animateToPage(
+            _currentPage,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      }
+    });
   }
 
-  Future<void> _loadBanners() async {
-    try {
-      final controller = BannerController();
-      final banners = await controller.loadBanners();
-      ref.read(bannerProvider.notifier).setBanners(banners);
-    } catch (e) {
-      print("Error loading banners: $e");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  @override
+  void dispose() {
+    _timer.cancel();
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final banners = ref.watch(bannerProvider);
+    final bannerState = ref.watch(bannerProvider);
 
     return Padding(
       padding: const EdgeInsets.all(2.0),
@@ -48,28 +58,48 @@ class _BannerWidgetState extends ConsumerState<BannerWidget> {
           color: AppColors.white,
           borderRadius: BorderRadius.circular(4),
         ),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : banners.isEmpty
-            ? const Center(child: Text("Không có banner"))
-            : PageView.builder(
-          itemCount: banners.length,
-          itemBuilder: (context, index) {
-            final BannerModel banner = banners[index];
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  banner.image,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                  const Center(child: Icon(Icons.broken_image)),
-                ),
-              ),
-            );
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await ref.read(bannerProvider.notifier).refreshBanners();
           },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: 180,
+              child: bannerState.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : bannerState.error != null
+                  ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: AppColors.pink,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      bannerState.error!,
+                      style: const TextStyle(color: AppColors.pink),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+                  : bannerState.banners.isEmpty
+                  ? const Center(child: Text("Không có banner"))
+                  : PageView.builder(
+                controller: _pageController,
+                reverse: false,
+                itemCount: bannerState.banners.length,
+                itemBuilder: (context, index) {
+                  final banner = bannerState.banners[index];
+                  return InnerBannerWidget(image: banner.image);
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );
