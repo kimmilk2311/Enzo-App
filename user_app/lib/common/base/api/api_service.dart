@@ -1,6 +1,3 @@
-
-
-
 import 'package:multi_store/common/base/api/response/base_response.dart';
 
 import 'api_connect.dart';
@@ -23,7 +20,8 @@ class ApiService {
     Map<String, dynamic> header = const {},
     Map<String, dynamic>? data,
   }) async {
-    return apiConnect.deleteData(endPoint: endPoint, query: query, data: data, header: header);
+    return apiConnect.deleteData(
+        endPoint: endPoint, query: query, data: data, header: header);
   }
 
   Future<BaseResponse> postData({
@@ -33,7 +31,8 @@ class ApiService {
     Map<String, dynamic>? data,
   }) async {
     query ??= {};
-    return apiConnect.postData(endPoint: endPoint, query: query, data: data, header: header);
+    return apiConnect.postData(
+        endPoint: endPoint, query: query, data: data, header: header);
   }
 
   Future<BaseResponse> putData({
@@ -42,7 +41,8 @@ class ApiService {
     Map<String, dynamic> header = const {},
     Map<String, dynamic>? data,
   }) async {
-    return apiConnect.putData(endPoint: endPoint, query: query, data: data, header: header);
+    return apiConnect.putData(
+        endPoint: endPoint, query: query, data: data, header: header);
   }
 
   Future<BaseResponse> getUriData({
@@ -66,6 +66,7 @@ class ApiService {
     Map<String, dynamic> header = const {},
     Map<String, dynamic>? data,
   }) async {
-    return apiConnect.patchData(endPoint: endPoint, query: query, data: data, header: header);
+    return apiConnect.patchData(
+        endPoint: endPoint, query: query, data: data, header: header);
   }
 }
