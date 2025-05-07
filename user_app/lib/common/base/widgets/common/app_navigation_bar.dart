@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:multi_store/resource/asset/app_images.dart';
@@ -22,72 +21,92 @@ class AppNavigationBar extends StatelessWidget {
       currentIndex: selectedIndex,
       onTap: onTabSelected,
       type: BottomNavigationBarType.fixed,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
       items: [
         BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppImages.icHome,
-            width: 25,
-            colorFilter: ColorFilter.mode(
-              selectedIndex == 0 ? AppColors.bluePrimary : AppColors.grey,
-              BlendMode.srcIn,
+          icon: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: SvgPicture.asset(
+              AppImages.icHome,
+              width: 23,
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 0 ? AppColors.blackFont : AppColors.bluePrimary,
+                BlendMode.srcIn,
+              ),
             ),
           ),
-          label: "Trang chủ",
+          label: "", // Bỏ label
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppImages.icHeart,
-            width: 25,
-            colorFilter: ColorFilter.mode(
-              selectedIndex == 1 ? AppColors.bluePrimary : AppColors.grey,
-              BlendMode.srcIn,
+          icon: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: SvgPicture.asset(
+              AppImages.icHeart,
+              width: 23,
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 1 ? AppColors.blackFont : AppColors.bluePrimary,
+                BlendMode.srcIn,
+              ),
             ),
           ),
-          label: "Yêu thích",
+          label: "",
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppImages.icCategory,
-            width: 25,
-            colorFilter: ColorFilter.mode(
-              selectedIndex == 2 ? AppColors.bluePrimary : AppColors.grey,
-              BlendMode.srcIn,
+          icon: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: SvgPicture.asset(
+              AppImages.icCategory,
+              width: 23,
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 2 ? AppColors.blackFont : AppColors.bluePrimary,
+                BlendMode.srcIn,
+              ),
             ),
           ),
-          label: "Danh mục",
+          label: "",
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppImages.icStore,
-            width: 25,
-            colorFilter: ColorFilter.mode(
-              selectedIndex == 3 ? AppColors.bluePrimary : AppColors.grey,
-              BlendMode.srcIn,
+          icon: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: SvgPicture.asset(
+              AppImages.icStore,
+              width: 23,
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 3 ? AppColors.blackFont : AppColors.bluePrimary,
+                BlendMode.srcIn,
+              ),
             ),
           ),
-          label: "Cửa hàng",
+          label: "",
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppImages.icCart,
-            width: 25,
-            colorFilter: ColorFilter.mode(
-              selectedIndex == 4 ? AppColors.bluePrimary : AppColors.grey,
-              BlendMode.srcIn,
+          icon: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: SvgPicture.asset(
+              AppImages.icCart,
+              width: 23,
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 4 ? AppColors.blackFont : AppColors.bluePrimary,
+                BlendMode.srcIn,
+              ),
             ),
           ),
-          label: "Giỏ hàng",
+          label: "",
         ),
         BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            AppImages.icUser,
-            width: 25,
-            colorFilter: ColorFilter.mode(
-              selectedIndex == 5 ? AppColors.bluePrimary : AppColors.grey,
-              BlendMode.srcIn,
+          icon: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: SvgPicture.asset(
+              AppImages.icUser,
+              width: 23,
+              colorFilter: ColorFilter.mode(
+                selectedIndex == 5 ? AppColors.blackFont : AppColors.bluePrimary,
+                BlendMode.srcIn,
+              ),
             ),
           ),
-          label: "Tài khoản",
+          label: "",
         ),
       ],
     );

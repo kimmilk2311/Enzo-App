@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:multi_store/common/base/widgets/common/hearder_widget.dart';
 import 'package:multi_store/common/base/widgets/details/category/subcategory_tile_widget.dart';
 import 'package:multi_store/common/base/widgets/details/products/subcategory_product_screen.dart';
-import 'package:multi_store/data/model/category_model.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
 import '../../../controller/category_controller.dart';
@@ -22,20 +21,9 @@ class _CategoryPageState extends State<CategoryPage> {
     super.initState();
     controller.loadCategories().then((_) async {
       if (controller.categories.isNotEmpty) {
-        // ✅ thêm danh mục "Tất cả"
-        final allCategory = Category(
-          id: 'all',
-          name: 'Tất cả',
-          image: '',
-          banner: '',
-        );
-        controller.categories.insert(0, allCategory);
+        controller.selectCategory(controller.categories[0]);
 
-        // ✅ chọn mặc định là "Tất cả"
-        controller.selectCategory(allCategory);
-
-        // ✅ tải tất cả subcategories
-        await controller.loadAllSubCategories();
+        await controller.loadSubCategories(controller.categories[0].name);
         setState(() {});
       }
     });
@@ -63,7 +51,6 @@ class _CategoryPageState extends State<CategoryPage> {
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ✅ Sidebar danh mục chính
           Expanded(
             flex: 2,
             child: Container(
@@ -79,14 +66,9 @@ class _CategoryPageState extends State<CategoryPage> {
                   return ListTile(
                     onTap: () async {
                       controller.selectCategory(category);
-                      if (category.id == 'all') {
-                        await controller.loadAllSubCategories();
-                      } else {
-                        await controller.loadSubCategories(category.name);
-                      }
+                      await controller.loadSubCategories(category.name);
                       setState(() {});
                     },
-
                     title: Text(
                       category.name,
                       style: AppStyles.STYLE_12_BOLD.copyWith(
@@ -101,7 +83,6 @@ class _CategoryPageState extends State<CategoryPage> {
             ),
           ),
 
-          // ✅ Nội dung subcategory bên phải
           Expanded(
             flex: 5,
             child: controller.selectedCategory == null
@@ -147,11 +128,14 @@ class _CategoryPageState extends State<CategoryPage> {
                       itemBuilder: (context, index) {
                         final subcategory = controller.subcategories[index];
                         return GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context){
-                              return SubcategoryProductScreen(subcategory: subcategory);
-                            }
-                            ));
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return SubcategoryProductScreen(
+                                    subcategory: subcategory);
+                              }),
+                            );
                           },
                           child: SubcategoryTileWidget(
                             image: subcategory.image,

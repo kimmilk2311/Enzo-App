@@ -211,7 +211,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             ),
             RadioListTile(
               title: Text(
-                "Stripe",
+                "VNPay",
                 style: AppStyles.STYLE_14_BOLD
                     .copyWith(color: AppColors.blackFont),
               ),

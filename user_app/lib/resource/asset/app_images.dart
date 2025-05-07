@@ -26,6 +26,8 @@ class AppImages {
   static const icHistory = '${assetsIcon}history.svg';
   static const icLogout = '${assetsIcon}logout.svg';
   static const icProduct = '${assetsIcon}product.svg';
+  static const icMail = '${assetsIcon}mail.svg';
+  static const icPhone = '${assetsIcon}phone.svg';
 
 
   static const imgSearchBanner = '${assetsImage}searchBanner.jpeg';
