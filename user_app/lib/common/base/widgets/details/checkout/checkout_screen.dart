@@ -13,6 +13,7 @@ import 'package:multi_store/resource/theme/app_style.dart';
 import 'package:multi_store/services/manage_http_response.dart';
 import 'package:multi_store/ui/main/screen/main_page.dart';
 import 'package:multi_store/ui/navigation/screens/home_page.dart';
+import 'package:multi_store/ui/started/screen/payment_page.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
@@ -82,20 +83,24 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       children: [
                         Text(
                           userData?.fullName ?? "Chưa có tên",
-                          style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
+                          style: AppStyles.STYLE_14_BOLD
+                              .copyWith(color: AppColors.blackFont),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           userData?.phone ?? "Thêm số điện thoại",
-                          style: AppStyles.STYLE_12.copyWith(color: AppColors.blackFont),
+                          style: AppStyles.STYLE_12
+                              .copyWith(color: AppColors.blackFont),
                         ),
                         Text(
                           userData?.email ?? "Thêm Email",
-                          style: AppStyles.STYLE_12.copyWith(color: AppColors.greyTextField),
+                          style: AppStyles.STYLE_12
+                              .copyWith(color: AppColors.greyTextField),
                         ),
-                      Text(
+                        Text(
                           userData?.address ?? "Thêm địa chỉ",
-                          style: AppStyles.STYLE_12.copyWith(color: AppColors.greyTextField),
+                          style: AppStyles.STYLE_12
+                              .copyWith(color: AppColors.greyTextField),
                         ),
                       ],
                     ),
@@ -129,7 +134,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
 
             Text(
               "Sản phẩm",
-              style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.blackFont),
+              style:
+                  AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.blackFont),
             ),
             const SizedBox(height: 12),
 
@@ -173,17 +179,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                 cartItem.productName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: AppStyles.STYLE_16.copyWith(color: AppColors.blackFont),
+                                style: AppStyles.STYLE_16
+                                    .copyWith(color: AppColors.blackFont),
                               ),
                               const SizedBox(height: 6),
                               Text(
                                 cartItem.category,
-                                style: AppStyles.STYLE_12.copyWith(color: Colors.grey),
+                                style: AppStyles.STYLE_12
+                                    .copyWith(color: Colors.grey),
                               ),
                               const SizedBox(height: 6),
                               Text(
                                 "${cartItem.quantity} x ${cartItem.productPrice}đ",
-                                style: AppStyles.STYLE_12_BOLD.copyWith(color: AppColors.bluePrimary),
+                                style: AppStyles.STYLE_12_BOLD
+                                    .copyWith(color: AppColors.bluePrimary),
                               ),
                             ],
                           ),
@@ -197,12 +206,14 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             const SizedBox(height: 20),
             Text(
               "Phương thức thanh toán",
-              style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.blackFont),
+              style:
+                  AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.blackFont),
             ),
             RadioListTile(
               title: Text(
-                "Momo",
-                style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
+                "VNPay",
+                style: AppStyles.STYLE_14_BOLD
+                    .copyWith(color: AppColors.blackFont),
               ),
               value: "stripe",
               groupValue: selectedPaymentMethod,
@@ -215,7 +226,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             RadioListTile<String>(
                 title: Text(
                   "Nhận hàng thanh toán",
-                  style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
+                  style: AppStyles.STYLE_14_BOLD
+                      .copyWith(color: AppColors.blackFont),
                 ),
                 value: 'cashOnDelivery',
                 groupValue: selectedPaymentMethod,
@@ -238,7 +250,8 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         address: userData?.address ?? '',
                       ),
                     ),
-                  );                },
+                  );
+                },
                 child: Text(
                   "Nhập địa chỉ giao hàng",
                   style: AppStyles.STYLE_16_BOLD.copyWith(
@@ -248,12 +261,56 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               )
             else
               AppButton(
-                text: selectedPaymentMethod == 'stripe' ? "Mua ngay" : "Đặt hàng",
+                text:
+                    selectedPaymentMethod == 'stripe' ? "Mua ngay" : "Đặt hàng",
                 onPressed: () async {
                   if (selectedPaymentMethod == 'stripe') {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return PaymentPage(
+                        amount: _cartProvider.getCartItems.values.fold(
+                            0,
+                            (sum, cart) =>
+                                sum + cart.productPrice * cart.quantity),
+                      );
+                    })).then((value) async {
+                      if (value is bool && value) {
+                        await Future.forEach(_cartProvider.getCartItems.entries,
+                            (entry) {
+                          var item = entry.value;
+                          _orderController.uploadOrders(
+                            id: '',
+                            fullName: ref.read(userProvider)!.fullName,
+                            email: ref.read(userProvider)!.email,
+                            address: ref.read(userProvider)!.address,
+                            productName: item.productName,
+                            productPrice: item.productPrice,
+                            quantity: item.quantity,
+                            category: item.category,
+                            image: item.images[0],
+                            phone: ref.read(userProvider)!.phone,
+                            buyerId: ref.read(userProvider)!.id,
+                            vendorId: item.vendorId,
+                            processing: true,
+                            delivered: false,
+                            context: context,
+                          );
+                        }).then((value) {
+                          _cartProvider.clearCart();
+                          showSnackBar(context, "Đặt hàng thành công");
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const MainPage();
+                          }));
+                        });
+                      } else {
+                        showSnackBar(context, "Đặt hàng thất bại");
+                      }
+                    });
                     // pay with stripe
                   } else {
-                    await Future.forEach(_cartProvider.getCartItems.entries, (entry) {
+                    await Future.forEach(_cartProvider.getCartItems.entries,
+                        (entry) {
                       var item = entry.value;
                       _orderController.uploadOrders(
                         id: '',
@@ -272,10 +329,11 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         delivered: false,
                         context: context,
                       );
-                    }).then((value){
+                    }).then((value) {
                       _cartProvider.clearCart();
                       showSnackBar(context, "Đặt hàng thành công");
-                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
                         return const MainPage();
                       }));
                     });
