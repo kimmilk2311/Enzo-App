@@ -9,7 +9,7 @@ import '../../../resource/asset/app_images.dart';
 import '../../../resource/theme/app_colors.dart';
 import '../../../resource/theme/app_styles.dart';
 
-class LoginPage extends ConsumerStatefulWidget { // Thay StatefulWidget bằng ConsumerStatefulWidget
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
@@ -34,7 +34,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         loginInput: loginInput,
         password: password,
         context: context,
-        ref: ref, // ✅ Thêm `ref` vào hàm gọi
+        ref: ref,
       );
 
       setState(() {
@@ -47,78 +47,99 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Text(
-                    "Đăng nhập",
-                    style: AppStyles.STYLE_36_BOLD.copyWith(color: AppColors.black80),
-                  ),
-                  const SizedBox(height: 20),
+      body: Stack(
+        children: [
+          Image.asset(
+            AppImages.imgBubble,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Text(
+                        "Đăng nhập",
+                        style: AppStyles.STYLE_36_BOLD.copyWith(color: AppColors.black80),
+                      ),
+                      const SizedBox(height: 20),
 
-                  // Email hoặc Số điện thoại
-                  AppTextField(
-                    hintText: "Nhập Email hoặc số điện thoại",
-                    prefixImage: AppImages.icUser,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return "Vui lòng nhập email hoặc số điện thoại";
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      loginInput = value;
-                    },
-                  ),
-                  const SizedBox(height: 15),
+                      // Email hoặc Số điện thoại
+                      AppTextField(
+                        hintText: "Nhập Email hoặc số điện thoại",
+                        prefixImage: AppImages.icUser,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "Vui lòng nhập email hoặc số điện thoại";
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          loginInput = value;
+                        },
+                      ),
+                      const SizedBox(height: 15),
 
-                  // Mật khẩu
-                  AppTextField(
-                    hintText: "Nhập mật khẩu",
-                    prefixImage: AppImages.icPassword,
-                    isPassword: true,
-                    validator: (value) {
-                      if (value == null || value.trim().length < 6) {
-                        return "Mật khẩu phải có ít nhất 6 ký tự";
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      password = value;
-                    },
-                  ),
-                  const SizedBox(height: 20),
+                      // Mật khẩu
+                      AppTextField(
+                        hintText: "Nhập mật khẩu",
+                        prefixImage: AppImages.icPassword,
+                        isPassword: true,
+                        validator: (value) {
+                          if (value == null || value.trim().length < 6) {
+                            return "Mật khẩu phải có ít nhất 6 ký tự";
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          password = value;
+                        },
+                      ),
+                      const SizedBox(height: 20),
 
-                  // Nút Đăng nhập
-                  AppButton(
-                    text: "Đăng nhập",
-                    isLoading: isLoading,
-                    onPressed: loginUser,
-                    color: AppColors.bluePrimary,
-                    textColor: AppColors.white,
-                  ),
-                  const SizedBox(height: 20),
+                      // Nút Đăng nhập
+                      AppButton(
+                        text: "Đăng nhập",
+                        isLoading: isLoading,
+                        onPressed: loginUser,
+                        color: AppColors.bluePrimary,
+                        textColor: AppColors.white,
+                      ),
+                      const SizedBox(height: 20),
 
-                  // Nút chuyển sang Đăng ký
-                  AppButton(
-                    text: "Đăng ký ngay",
-                    isLoading: false,
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage()));
-                    },
-                    color: AppColors.white40,
-                    textColor: AppColors.bluePrimary,
+                      // Nút chuyển sang Đăng ký
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "Chưa có tài khoản? ",
+                            style: AppStyles.STYLE_16.copyWith(color: AppColors.blackFont),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return const RegisterPage();
+                              }));
+                            },
+                            child: Text(
+                              "Đăng ký",
+                              style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.bluePrimary),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

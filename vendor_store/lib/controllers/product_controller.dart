@@ -67,7 +67,7 @@ class ProductController {
         images: images,
         averageRating: 0.0,
         // ✅ default rating
-        totalRatings: 0, // ✅ default rating count
+        totalRatings: 0,
       );
 
       final response = await http.post(

@@ -23,7 +23,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLine = 1,
     this.maxLength,
     this.validator,
-    this.onChanged,
+    this.onChanged, required InputDecoration decoration,
   });
 
   @override

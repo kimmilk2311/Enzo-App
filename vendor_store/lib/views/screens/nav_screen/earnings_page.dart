@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +10,7 @@ import '../../../controllers/order_controller.dart';
 import '../../../provider/order_provider.dart';
 import '../../../provider/total_earnings_provider.dart';
 import '../../../provider/vendor_provider.dart';
+import '../../../resource/asset/app_images.dart';
 
 class EarningsPage extends ConsumerStatefulWidget {
   const EarningsPage({super.key});
@@ -41,7 +44,20 @@ class _EarningsPageState extends ConsumerState<EarningsPage> {
     final format = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
     return format.format(amount);
   }
-
+  ImageProvider _buildUserImage(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return AssetImage(AppImages.imgDefaultAvatar);
+    } else if (imagePath.startsWith('http')) {
+      return NetworkImage(imagePath);
+    } else {
+      final file = File(imagePath);
+      if (file.existsSync()) {
+        return FileImage(file);
+      } else {
+        return AssetImage(AppImages.imgDefaultAvatar);
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final vendor = ref.watch(vendorProvider);
@@ -87,20 +103,8 @@ class _EarningsPageState extends ConsumerState<EarningsPage> {
               child: Column(
                 children: [
                   CircleAvatar(
-                    radius: 30,
-                    backgroundImage: vendor.image.isNotEmpty
-                        ? NetworkImage(vendor.image)
-                        : null,
-                    backgroundColor: AppColors.grey,
-                    child: vendor.image.isEmpty
-                        ? Text(
-                      vendor.fullName.isNotEmpty
-                          ? vendor.fullName[0].toUpperCase()
-                          : "?",
-                      style: AppStyles.STYLE_28_BOLD
-                          .copyWith(color: AppColors.white),
-                    )
-                        : null,
+                    radius: 40,
+                    backgroundImage: _buildUserImage(vendor!.storeImage),
                   ),
                   const SizedBox(height: 15),
                   Text(

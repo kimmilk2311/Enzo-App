@@ -2,12 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:multi_store/common/base/widgets/common/custom_app_bar.dart';
+import 'package:multi_store/resource/theme/app_style.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:http/http.dart' as http;
 
+import '../../../../../resource/theme/app_colors.dart';
+
 class PaymentPage extends StatefulWidget {
   final double amount;
+
   const PaymentPage({super.key, required this.amount});
 
   @override
@@ -16,6 +20,7 @@ class PaymentPage extends StatefulWidget {
 
 class _PaymentPageState extends State<PaymentPage> {
   late WebViewController _controller;
+
   @override
   void initState() {
     super.initState();
@@ -44,13 +49,8 @@ class _PaymentPageState extends State<PaymentPage> {
 
   Future<void> _getUrlPayment() async {
     http.Response response = await http.post(
-        Uri.parse(
-            'https://vnpay-payment-production.up.railway.app/order/create_payment_url'),
-        body: {
-          'amount': widget.amount.toInt().toString(),
-          'bankCode': '',
-          'language': 'vn'
-        });
+        Uri.parse('https://vnpay-payment-production.up.railway.app/order/create_payment_url'),
+        body: {'amount': widget.amount.toInt().toString(), 'bankCode': '', 'language': 'vn'});
 
     if (response.statusCode == 200) {
       final dynamic data = jsonDecode(response.body);
@@ -77,6 +77,14 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Thanh toán",
+          style: AppStyles.STYLE_18_BOLD.copyWith(color: AppColors.blackFont),
+        ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
       body: WebViewWidget(
         controller: _controller,
       ),

@@ -34,20 +34,20 @@ const vendorAuth = async (req, res, next) => {
   try {
     const token = req.header('x-auth-token');
     if (!token) {
-      return res.status(401).json({ msg: 'No token, authorization denied' });
+      return res.status(401).json({ msg: 'Không xác thực được token. Truy cập bị từ chối.' });
     }
 
-    const verified = jwt.verify(token, 'passwordKey'); // 'passwordKey' là key của bạn
+    const verified = jwt.verify(token, 'passwordKey'); 
     if (!verified) {
-      return res.status(401).json({ msg: 'Token verification failed' });
+      return res.status(401).json({ msg: 'Token không hợp lệ. Truy cập bị từ chối.' });
     }
 
     // Kiểm tra role có phải là 'vendor' không
     if (verified.role !== 'vendor') {
-      return res.status(403).json({ msg: 'You are not authorized as a vendor' });
+      return res.status(403).json({ msg: 'Bạn không phải nhà bán hàng' });
     }
 
-    req.user = verified; // Gán thông tin user vào request
+    req.user = verified; 
     next();
   } catch (err) {
     res.status(500).json({ error: err.message });

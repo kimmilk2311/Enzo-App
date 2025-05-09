@@ -62,6 +62,7 @@ authRouter.post('/api/signup', async (req, res) => {
     });
 
   } catch (e) {
+    console.error("Loi trong quá trình đăng ký",e);
         return res.status(500).json({ error: "Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau." });
   }
 });

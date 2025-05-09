@@ -20,10 +20,18 @@ class SubcategoryProductScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(subcategory.subCategoryName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              ref.read(subcategoryProductProvider(subcategory.subCategoryName).notifier).refresh();
+            },
+          ),
+        ],
       ),
       body: asyncProducts.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Đã xảy ra lỗi: $error')),
+        error: (error, stackTrace) => Center(child: Text('Đã xảy ra lỗi: $error')),
         data: (products) {
           if (products.isEmpty) {
             return const Center(child: Text("Không có sản phẩm nào."));

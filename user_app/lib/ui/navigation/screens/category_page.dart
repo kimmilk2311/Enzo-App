@@ -1,48 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_store/common/base/widgets/common/hearder_widget.dart';
 import 'package:multi_store/common/base/widgets/details/category/subcategory_tile_widget.dart';
 import 'package:multi_store/common/base/widgets/details/products/subcategory_product_screen.dart';
+import 'package:multi_store/data/model/category_model.dart';
+import 'package:multi_store/provider/category_provider.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
-import '../../../controller/category_controller.dart';
 
-class CategoryPage extends StatefulWidget {
+class CategoryPage extends ConsumerStatefulWidget {
   const CategoryPage({super.key});
 
   @override
-  _CategoryPageState createState() => _CategoryPageState();
+  ConsumerState<CategoryPage> createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> {
-  final CategoryController controller = CategoryController();
-
-  @override
-  void initState() {
-    super.initState();
-    controller.loadCategories().then((_) async {
-      if (controller.categories.isNotEmpty) {
-        controller.selectCategory(controller.categories[0]);
-
-        await controller.loadSubCategories(controller.categories[0].name);
-        setState(() {});
-      }
-    });
-
-    controller.notifier.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    controller.notifier.dispose();
-    super.dispose();
-  }
-
+class _CategoryPageState extends ConsumerState<CategoryPage> {
   @override
   Widget build(BuildContext context) {
+    final categoryState = ref.watch(categoryProvider);
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.2),
@@ -55,24 +32,25 @@ class _CategoryPageState extends State<CategoryPage> {
             flex: 2,
             child: Container(
               color: AppColors.white40,
-              child: controller.isLoading
+              child: categoryState.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : controller.categories.isEmpty
+                  : categoryState.categories.isEmpty
                   ? const Center(child: Text("Không có danh mục"))
                   : ListView.builder(
-                itemCount: controller.categories.length,
+                itemCount: categoryState.categories.length,
                 itemBuilder: (context, index) {
-                  final category = controller.categories[index];
+                  final category = categoryState.categories[index];
                   return ListTile(
                     onTap: () async {
-                      controller.selectCategory(category);
-                      await controller.loadSubCategories(category.name);
-                      setState(() {});
+                      ref.read(categoryProvider.notifier).selectCategory(category);
+                      await ref
+                          .read(categoryProvider.notifier)
+                          .refreshSubCategories(category.name);
                     },
                     title: Text(
                       category.name,
                       style: AppStyles.STYLE_12_BOLD.copyWith(
-                        color: controller.selectedCategory == category
+                        color: categoryState.selectedCategory == category
                             ? AppColors.bluePrimary
                             : AppColors.black,
                       ),
@@ -82,10 +60,9 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
             ),
           ),
-
           Expanded(
             flex: 5,
-            child: controller.selectedCategory == null
+            child: categoryState.selectedCategory == null
                 ? const Center(child: Text("Please select a category"))
                 : Padding(
               padding: const EdgeInsets.all(16.0),
@@ -94,23 +71,23 @@ class _CategoryPageState extends State<CategoryPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      controller.selectedCategory!.name,
+                      categoryState.selectedCategory!.name,
                       style: AppStyles.STYLE_20_BOLD.copyWith(color: AppColors.blackFont),
                     ),
-                    if (controller.selectedCategory!.banner.isNotEmpty)
+                    if (categoryState.selectedCategory!.banner.isNotEmpty)
                       Container(
                         height: 130,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: NetworkImage(controller.selectedCategory!.banner),
+                            image: NetworkImage(categoryState.selectedCategory!.banner),
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
                     const SizedBox(height: 10),
-                    controller.isLoadingSubcategories
+                    categoryState.isLoadingSubcategories
                         ? const Center(child: CircularProgressIndicator())
-                        : controller.subcategories.isEmpty
+                        : categoryState.subcategories.isEmpty
                         ? const Padding(
                       padding: EdgeInsets.only(top: 20.0),
                       child: Center(child: Text("No subcategories available")),
@@ -118,15 +95,17 @@ class _CategoryPageState extends State<CategoryPage> {
                         : GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: controller.subcategories.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      itemCount: categoryState.subcategories.length,
+                      gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 4,
                         childAspectRatio: 2 / 3,
                       ),
                       itemBuilder: (context, index) {
-                        final subcategory = controller.subcategories[index];
+                        final subcategory =
+                        categoryState.subcategories[index];
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(

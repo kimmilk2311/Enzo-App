@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vendor_store/controllers/vendor_auth_controller.dart';
 import 'package:vendor_store/provider/vendor_provider.dart';
+import 'package:vendor_store/views/screens/nav_screen/orders_page.dart';
 
 import '../../../common/widgets/confirm_dialog.dart';
 import '../../../resource/asset/app_images.dart';
@@ -115,7 +116,7 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
                   style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.white),
                 ),
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.green600,
+                    backgroundColor: AppColors.bluePrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     )),
@@ -207,20 +208,16 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
                 ],
               ),
             ),
-            ListTile(
-              onTap: () {},
-              leading: const Icon(Icons.art_track_rounded),
-              title: Text(
-                "Theo dõi đơn hàng",
-                style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
-              ),
-            ),
             const SizedBox(height: 5),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return const OrdersPage();
+                }));
+              },
               leading: const Icon(Icons.history),
               title: Text(
-                "Lịch sử mua hàng",
+                "Lịch sử đơn hàng",
                 style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
               ),
             ),

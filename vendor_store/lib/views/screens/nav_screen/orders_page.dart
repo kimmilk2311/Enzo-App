@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:vendor_store/provider/vendor_provider.dart';
-
 import '../../../common/widgets/confirm_dialog.dart';
 import '../../../controllers/order_controller.dart';
 import '../../../provider/order_provider.dart';
@@ -24,7 +23,6 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
     _fetchOrders();
   }
 
-
   Future<void> _fetchOrders() async {
     final user = ref.read(vendorProvider);
     if (user != null) {
@@ -33,21 +31,22 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
         final orders = await orderController.loadOrders(vendorId: user.id);
         ref.read(orderProvider.notifier).setOrders(orders);
       } catch (e) {
-        print("Lỗi đơn hàng:$e");
+        print("Lỗi đơn hàng: $e");
       }
     }
   }
+
   String formatCurrency(int price) {
     final format = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
     return format.format(price);
   }
 
-  Future<void> _deleteOrder(String orderId) async{
+  Future<void> _deleteOrder(String orderId) async {
     final OrderController orderController = OrderController();
-    try{
+    try {
       await orderController.deleteOrder(id: orderId, context: context);
       _fetchOrders();
-    }catch(e){
+    } catch (e) {
       print("Xóa không thành công: $e");
     }
   }
@@ -87,8 +86,8 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: InkWell(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context){
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return OrderDetailScreen(order: order);
                 }));
               },
@@ -159,7 +158,7 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
                                         : "Đã hủy",
                                     style: AppStyles.STYLE_12_BOLD.copyWith(color: AppColors.white),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -167,16 +166,18 @@ class _OrdersPageState extends ConsumerState<OrdersPage> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 80,
-                    right: 8,
-                    child: IconButton(
-                      icon: const Icon(Icons.delete, color: AppColors.pink),
-                      onPressed: () {
-                        _showDeleteConfirmationDialog(context, order.id);
-                      },
+                  // Chỉ hiển thị nút Delete nếu đơn hàng chưa được giao (order.delivered == false)
+                  if (!order.delivered)
+                    Positioned(
+                      top: 80,
+                      right: 8,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete, color: AppColors.pink),
+                        onPressed: () {
+                          _showDeleteConfirmationDialog(context, order.id);
+                        },
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),

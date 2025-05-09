@@ -19,6 +19,7 @@ class AppImages {
   static const icCartWhite = '${assetsIcon}cart_white.svg';
   static const icMessWhite = '${assetsIcon}message_white.svg';
   static const icEdit = '${assetsIcon}edit.svg';
+  static const icEmail = '${assetsIcon}mail.svg';
 
 
   static const imgSearchBanner = '${assetsImage}searchBanner.jpeg';

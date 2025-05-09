@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:multi_store/common/base/widgets/common/reusable_text_widget.dart';
+import 'package:multi_store/common/base/widgets/details/products/popular_product_page.dart';
 import 'package:multi_store/common/base/widgets/details/products/popular_product_widget.dart';
+import 'package:multi_store/common/base/widgets/details/products/top_rated_product_page.dart';
 
 import '../../../common/base/widgets/details/banner/banner_widget.dart';
 import '../../../common/base/widgets/common/hearder_widget.dart';
@@ -33,19 +35,29 @@ class _HomePageState extends State<HomePage> {
             const CategoryItemWidget(),
             const SizedBox(height: 5),
             ReusableTextWidget(
-              title: "Phổ biến",
-              actionText: "Xem tất cả",
-              onPressed: () {},
-            ),
-            const SizedBox(height: 5),
-            const PopularProductWidget(),
-            ReusableTextWidget(
               title: "Top sản phẩm",
               actionText: "Xem tất cả",
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return const TopRatedProductPage();
+                }));
+              },
             ),
             const SizedBox(height: 5),
             const TopRatedWidget(),
+            const SizedBox(height: 5),
+            ReusableTextWidget(
+              title: "Phổ biến",
+              actionText: "Xem tất cả",
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return const PopularProductPage();
+                }));
+              },
+            ),
+            const SizedBox(height: 5),
+            const PopularProductWidget(),
+
           ],
         ),
       ),

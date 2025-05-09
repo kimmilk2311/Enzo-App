@@ -17,15 +17,15 @@ class CustomVendorNav extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: pageIndex,
       onTap: onTap,
-      unselectedItemColor: AppColors.grey,
-      selectedItemColor: AppColors.bluePrimary,
-      type: BottomNavigationBarType.fixed,
+      unselectedItemColor: AppColors.bluePrimary,
+      selectedItemColor: AppColors.blackFont,
+      type: BottomNavigationBarType.shifting,
       items: const [
-        BottomNavigationBarItem(icon: Icon(CupertinoIcons.money_dollar), label: "Thống kê"),
-        BottomNavigationBarItem(icon: Icon(CupertinoIcons.upload_circle), label: "Thêm sản phẩm"),
-        BottomNavigationBarItem(icon: Icon(Icons.edit), label: "Chỉnh sửa"),
-        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Đơn đặt hàng"),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Thông tin cá nhân"),
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.money_dollar), label: ""),
+        BottomNavigationBarItem(icon: Icon(CupertinoIcons.upload_circle), label: ""),
+        BottomNavigationBarItem(icon: Icon(Icons.edit), label: ""),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: ""),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
       ],
     );
 

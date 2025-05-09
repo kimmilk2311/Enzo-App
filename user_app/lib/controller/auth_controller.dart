@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:multi_store/provider/cart_provider.dart';
 import 'package:multi_store/provider/delivered_order_count_provider.dart';
 import 'package:multi_store/provider/favorite_provider.dart';
 import 'package:multi_store/ui/authentication/verify/otp_page.dart';
@@ -45,6 +46,8 @@ class AuthController {
         response: response,
         context: context,
         onSuccess: () {
+
+
           if (!context.mounted) return;
           Navigator.push(
             context,
@@ -91,6 +94,10 @@ class AuthController {
           ref.read(userProvider.notifier).setUser(response.body);
 
           await prefs.setString('user', userJson);
+
+          ref.read(deliveredOrderCountProvider.notifier).resetCount();
+          ref.read(favoriteProvider.notifier).resetFavorites();
+          ref.read(cartProvider.notifier).clearCart();
 
           if(ref.read(userProvider)!.token.isNotEmpty){
 
@@ -205,6 +212,8 @@ class AuthController {
 
       ref.read(userProvider.notifier).signOut();
       ref.read(deliveredOrderCountProvider.notifier).resetCount();
+      ref.read(favoriteProvider.notifier).resetFavorites();
+      ref.read(cartProvider.notifier).clearCart();
 
       if (!context.mounted) return;
 
@@ -319,6 +328,11 @@ class AuthController {
           ref.read(userProvider.notifier).signOut();
           ref.read(deliveredOrderCountProvider.notifier).resetCount();
           ref.read(favoriteProvider.notifier).resetFavorites();
+          ref.read(cartProvider.notifier).clearCart();
+
+          Navigator.push(context, MaterialPageRoute(builder: (context){
+            return const LoginPage();
+          }));
 
           showSnackBar(context, "Tài khoản đã được xóa");
         },

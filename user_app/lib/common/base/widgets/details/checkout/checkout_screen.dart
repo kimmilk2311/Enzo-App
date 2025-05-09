@@ -13,7 +13,7 @@ import 'package:multi_store/resource/theme/app_style.dart';
 import 'package:multi_store/services/manage_http_response.dart';
 import 'package:multi_store/ui/main/screen/main_page.dart';
 import 'package:multi_store/ui/navigation/screens/home_page.dart';
-import 'package:multi_store/ui/started/screen/payment_page.dart';
+import 'package:multi_store/common/base/widgets/details/checkout/payment_page.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});

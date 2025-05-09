@@ -15,7 +15,7 @@ class CategoryController {
   final ValueNotifier<void> notifier = ValueNotifier<void>(null);
 
   // Load danh sách danh mục chính
-  Future<void> loadCategories() async {
+  Future<List<Category>> loadCategories() async {
     try {
       isLoading = true;
       notifier.notifyListeners();
@@ -30,11 +30,12 @@ class CategoryController {
         categories = data
             .map((category) => Category.fromJson(category as Map<String, dynamic>))
             .toList();
+        return categories; // Trả về danh sách categories
       } else {
-        throw Exception('Failed to load categories.');
+        throw Exception('Failed to load categories: ${response.statusCode}');
       }
     } catch (e) {
-      print("Error loading categories: $e");
+      throw Exception('Error loading categories: $e'); // Ném ngoại lệ để provider xử lý
     } finally {
       isLoading = false;
       notifier.notifyListeners();
