@@ -8,6 +8,12 @@ class VendorProductProvider extends StateNotifier<List<Product>>{
   void setProducts(List<Product> products){
     state = products;
   }
+
+  // Xóa danh sách sản phẩm
+  void clearProducts() {
+    state = [];
+  }
+
 }
 final vendorProductProvider = StateNotifierProvider<VendorProductProvider,List<Product>>(
         (ref){

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:multi_store/common/base/widgets/common/reusable_text_widget.dart';
+import 'package:multi_store/common/base/widgets/details/products/all_product_page.dart';
+import 'package:multi_store/common/base/widgets/details/products/all_product_widget.dart';
 import 'package:multi_store/common/base/widgets/details/products/popular_product_page.dart';
 import 'package:multi_store/common/base/widgets/details/products/popular_product_widget.dart';
 import 'package:multi_store/common/base/widgets/details/products/top_rated_product_page.dart';
@@ -34,6 +36,20 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 5),
             const CategoryItemWidget(),
             const SizedBox(height: 5),
+
+            ReusableTextWidget(
+              title: "Tất cả sản phẩm",
+              actionText: "Xem tất cả",
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return const AllProductPage();
+                }));
+              },
+            ),
+            const SizedBox(height: 5),
+          const  AllProductWidget(),
+            const SizedBox(height: 5),
+
             ReusableTextWidget(
               title: "Top sản phẩm",
               actionText: "Xem tất cả",

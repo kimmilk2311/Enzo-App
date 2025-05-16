@@ -36,7 +36,7 @@ class _AppTextFieldState extends State<AppTextField> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -53,7 +53,7 @@ class _AppTextFieldState extends State<AppTextField> {
           contentPadding:
           const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           filled: true,
-          fillColor: Colors.transparent, // Để gradient từ Container hiển thị
+          fillColor: Colors.transparent,
           hintText: widget.hintText,
           hintStyle: AppStyles.STYLE_14.copyWith(
             color: AppColors.black80,
@@ -64,36 +64,36 @@ class _AppTextFieldState extends State<AppTextField> {
             padding: const EdgeInsets.all(12),
             child: SvgPicture.asset(
               widget.prefixImage,
-              width: 24, // Tăng kích thước icon nhẹ
+              width: 24,
               height: 24,
-              color: AppColors.black80, // Đảm bảo icon rõ ràng
+              color: AppColors.black80,
             ),
           )
               : null,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(15),
             borderSide: const BorderSide(
-              color: AppColors.bluePrimary, // Màu viền nổi bật khi focus
+              color: AppColors.bluePrimary,
               width: 2,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(15),
             borderSide: const BorderSide(
-              color: AppColors.pink, // Màu viền khi có lỗi
+              color: AppColors.pink,
               width: 2,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(15),
             borderSide: const BorderSide(
               color: AppColors.pink,
               width: 2,
@@ -103,9 +103,9 @@ class _AppTextFieldState extends State<AppTextField> {
               ? IconButton(
             icon: SvgPicture.asset(
               _isObscured ? AppImages.icEyes : AppImages.icEyes,
-              width: 24, // Tăng kích thước icon nhẹ
+              width: 24,
               height: 24,
-              color: AppColors.blackFont, // Màu icon nhẹ hơn
+              color: AppColors.blackFont,
             ),
             onPressed: () {
               setState(() {

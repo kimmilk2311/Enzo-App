@@ -67,6 +67,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         centerTitle: true,
         title: Text(
           widget.product.productName,
+          overflow: TextOverflow.ellipsis,
           style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.blackFont),
         ),
         actions: [
@@ -105,10 +106,14 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.product.productName,
-                    style: AppStyles.STYLE_16_BOLD.copyWith(
-                      color: AppColors.bluePrimary,
+                  SizedBox(
+                    width: 200,
+                    child: Text(
+                      widget.product.productName,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyles.STYLE_16_BOLD.copyWith(
+                        color: AppColors.bluePrimary,
+                      ),
                     ),
                   ),
                   Text(
@@ -187,8 +192,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                       },
                     ),
                   ),
-
-               const   SizedBox(height: 50),
+                  const SizedBox(height: 50),
                 ],
               ),
             ),
@@ -244,7 +248,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 showSnackBar(context, "${widget.product.productName} đã thêm vào giỏ hàng");
 
                 // Chuyển tới màn hình giỏ hàng
-                Navigator.push(context, MaterialPageRoute(builder: (context){
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return CartPage();
                 }));
               },

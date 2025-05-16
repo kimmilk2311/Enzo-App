@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:multi_store/provider/cart_provider.dart';
 import 'package:multi_store/provider/delivered_order_count_provider.dart';
 import 'package:multi_store/provider/favorite_provider.dart';
 import 'package:multi_store/ui/authentication/verify/otp_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../global_variables.dart';
+import '../provider/cart_provider.dart';
 import '../provider/user_provider.dart';
 import '../services/manage_http_response.dart';
 import '../ui/authentication/login/screen/login_page.dart';
@@ -46,8 +46,6 @@ class AuthController {
         response: response,
         context: context,
         onSuccess: () {
-
-
           if (!context.mounted) return;
           Navigator.push(
             context,
@@ -92,12 +90,11 @@ class AuthController {
           final userJson = jsonEncode(jsonDecode(response.body) );
 
           ref.read(userProvider.notifier).setUser(response.body);
-
-          await prefs.setString('user', userJson);
-
           ref.read(deliveredOrderCountProvider.notifier).resetCount();
           ref.read(favoriteProvider.notifier).resetFavorites();
           ref.read(cartProvider.notifier).clearCart();
+
+          await prefs.setString('user', userJson);
 
           if(ref.read(userProvider)!.token.isNotEmpty){
 
@@ -111,7 +108,7 @@ class AuthController {
         },
       );
     } catch (e) {
-        showSnackBar(context, "Đã xảy ra lỗi khi đăng nhập");
+      showSnackBar(context, "Đã xảy ra lỗi khi đăng nhập");
 
     }
   }
@@ -211,16 +208,14 @@ class AuthController {
       await prefs.remove('user');
 
       ref.read(userProvider.notifier).signOut();
-      ref.read(deliveredOrderCountProvider.notifier).resetCount();
-      ref.read(favoriteProvider.notifier).resetFavorites();
-      ref.read(cartProvider.notifier).clearCart();
+
 
       if (!context.mounted) return;
 
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
-        (route) => false,
+            (route) => false,
       );
 
       showSnackBar(context, "Đăng xuất thành công");
@@ -329,10 +324,6 @@ class AuthController {
           ref.read(deliveredOrderCountProvider.notifier).resetCount();
           ref.read(favoriteProvider.notifier).resetFavorites();
           ref.read(cartProvider.notifier).clearCart();
-
-          Navigator.push(context, MaterialPageRoute(builder: (context){
-            return const LoginPage();
-          }));
 
           showSnackBar(context, "Tài khoản đã được xóa");
         },

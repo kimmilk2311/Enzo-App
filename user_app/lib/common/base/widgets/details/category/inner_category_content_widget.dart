@@ -23,10 +23,15 @@ class _InnerCategoryContentWidgetState
   @override
   void initState() {
     super.initState();
-    // Tải subcategories cho danh mục hiện tại
-    ref
-        .read(categoryProvider.notifier)
-        .refreshSubCategories(widget.category.name);
+
+    final notifier = ref.read(categoryProvider.notifier);
+    // Chỉ update selectedCategory nếu khác với category hiện tại
+    if (ref.read(categoryProvider).selectedCategory?.id != widget.category.id) {
+      notifier.selectCategory(widget.category);
+    }
+
+    // Load subcategories tương ứng
+    notifier.refreshSubCategories(widget.category.name);
   }
 
   @override
@@ -71,8 +76,7 @@ class _InnerCategoryContentWidgetState
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            SubcategoryProductScreen(subcategory: sub),
+                        builder: (_) => SubcategoryProductScreen(subcategory: sub),
                       ),
                     );
                   },

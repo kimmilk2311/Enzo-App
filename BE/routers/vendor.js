@@ -102,7 +102,7 @@ VendorRouter.get('/get-vendor', auth, async(req, res) => {
   
     const vendor = await Vendor.findById(req.user); 
   
-   return  res.json({...vendor._doc, token: req.token}); // Trả về thông tin người dùng và token
+   return  res.json({...vendor._doc, token: req.token}); 
     
   } catch (e) {
     console.error("❌ Lỗi xác thực:", e);

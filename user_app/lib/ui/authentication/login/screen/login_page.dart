@@ -46,15 +46,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: AppColors.white,
       body: Stack(
         children: [
           Image.asset(
-            AppImages.imgBubble,
+            AppImages.imgBrSignUp,
             fit: BoxFit.cover,
             width: double.infinity,
-            height: double.infinity,
+            height: screenHeight * 0.6,
           ),
           SafeArea(
             child: Center(
@@ -68,16 +69,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              "Đăng nhập",
-                              style: AppStyles.STYLE_36_BOLD.copyWith(color: AppColors.black80),
-                            ),
-                            Text(
-                              "Chào mừng bạn quay trở lại",
-                              style: AppStyles.STYLE_18.copyWith(color: AppColors.black80),
-                            ),
+                            // Text(
+                            //   "Đăng nhập",
+                            //   style: AppStyles.STYLE_36_BOLD.copyWith(color: AppColors.black80),
+                            // ),
+                            const SizedBox(height: 10),
+                            Image.asset(AppImages.imgLogo,fit: BoxFit.cover,),
+                            const SizedBox(height: 10),
                           ],
                         ),
                       ),
@@ -95,18 +95,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         onChanged: (value) => password = value,
                       ),
                       const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () {
-                            // Quên mật khẩu
-                          },
-                          child: Text(
-                            "Quên mật khẩu?",
-                            style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.bluePrimary),
-                          ),
-                        ),
-                      ),
+                      // Align(
+                      //   alignment: Alignment.centerRight,
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       // Quên mật khẩu
+                      //     },
+                      //     child: Text(
+                      //       "Quên mật khẩu?",
+                      //       style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.bluePrimary),
+                      //     ),
+                      //   ),
+                      // ),
                       const SizedBox(height: 20),
                       AppButton(
                         text: "Đăng nhập",

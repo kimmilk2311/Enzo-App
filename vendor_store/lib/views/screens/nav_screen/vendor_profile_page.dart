@@ -40,7 +40,7 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
     final user = ref.read(vendorProvider);
     final TextEditingController _storeDescriptionController = TextEditingController();
 
-    _storeDescriptionController.text =  user?.storeDescription?? "";
+    _storeDescriptionController.text = user?.storeDescription ?? "";
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -143,134 +143,98 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.read(vendorProvider);
+    final user = ref.watch(vendorProvider);
 
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: SingleChildScrollView(
+      appBar: AppBar(
+        backgroundColor: AppColors.bluePrimary,
+        elevation: 0,
+        title: const Text(
+          'Thông tin cửa hàng',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(
-              height: 350,
-              child: Stack(
-                clipBehavior: Clip.none,
+            // Avatar và thông tin cửa hàng
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              child: Column(
                 children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      AppImages.imgBrProfile,
-                      width: MediaQuery.of(context).size.width,
-                      fit: BoxFit.cover,
+                  Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.grey, width: 2),
+                    ),
+                    child: CircleAvatar(
+                      radius: 40,
+                      backgroundImage: _buildUserImage(user?.storeImage),
+                      backgroundColor: Colors.white,
                     ),
                   ),
-                  Positioned(
-                    top: 40,
-                    right: 30,
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: SvgPicture.asset(
-                        AppImages.icMessWhite,
-                        width: 30,
-                        height: 30,
-                      ),
+                  const SizedBox(height: 16),
+                  Text(
+                    user?.fullName ?? 'Tên cửa hàng',
+                    style: AppStyles.STYLE_28_BOLD.copyWith(color: AppColors.blackFont),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Text(
+                      user?.storeDescription ?? 'Chưa có mô tả',
+                      style: AppStyles.STYLE_16.copyWith(color: AppColors.greyDark),
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Positioned(
-                    top: 120,
-                    left: 140,
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        // Avatar
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundImage: _buildUserImage(user!.storeImage),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: InkWell(
-                            onTap: () {
-                              showEditProfileDialog(context);
-                            },
-                            child: SvgPicture.asset(
-                              AppImages.icEdit,
-                              width: 30,
-                              height: 30,
-                              color: AppColors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
                 ],
               ),
             ),
-            const SizedBox(height: 5),
-            ListTile(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return const OrdersPage();
-                }));
-              },
-              leading: const Icon(Icons.history),
-              title: Text(
-                "Lịch sử đơn hàng",
-                style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
-              ),
-            ),
-            const SizedBox(height: 5),
-            ListTile(
-              onTap: () {},
-              leading: const Icon(Icons.help_outline),
-              title: Text(
-                "Trợ giúp",
-                style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
-              ),
-            ),
-            const SizedBox(height: 5),
-            ListTile(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => ConfirmDialog(
-                    content: "Bạn có chắc chắn muốn đăng xuất không?",
-                    onConfirm: () async {
-                      _vendorAuthController.signOutVendor(context: context);
-                    },
-                    onCancel: () {},
-                  ),
-                );
-              },
-              leading: const Icon(Icons.logout),
-              title: Text(
-                "Đăng xuất",
-                style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
-              ),
-            ),
-            const SizedBox(height: 5),
-            ListTile(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => ConfirmDialog(
-                    content: "Bạn có chắc chắn muốn xóa tài khoản không?",
-                    onConfirm: () async {},
-                    onCancel: () {},
-                  ),
-                );
-              },
-              leading: const Icon(Icons.delete),
-              title: Text(
-                "Xóa tài khoản",
-                style: AppStyles.STYLE_14_BOLD.copyWith(color: AppColors.blackFont),
-              ),
+            const Spacer(),
+            Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: Text("Cập nhật thông tin", style: AppStyles.STYLE_14_BOLD),
+                  onTap: () => showEditProfileDialog(context),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.history),
+                  title: Text("Lịch sử đơn hàng", style: AppStyles.STYLE_14_BOLD),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const OrdersPage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: Text("Đăng xuất", style: AppStyles.STYLE_14_BOLD),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ConfirmDialog(
+                        content: "Bạn có chắc chắn muốn đăng xuất không?",
+                        onConfirm: () => _vendorAuthController.signOutVendor(context: context),
+                        onCancel: () {},
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+              ],
             ),
           ],
         ),
       ),
     );
   }
+
 }

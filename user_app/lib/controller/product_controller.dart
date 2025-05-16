@@ -6,6 +6,32 @@ import '../data/model/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductController {
+  Future<List<Product>> loadAllProducts() async {
+    try {
+      final response = await http.get(Uri.parse("$uri/api/products")).timeout(Duration(seconds: 10));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data is List) {
+          return data.map((product) {
+            if (product is Map<String, dynamic>) {
+              return Product.fromMap(product);
+            }
+            throw Exception("Dữ liệu sản phẩm không hợp lệ");
+          }).toList();
+        }
+        throw Exception("Dữ liệu không phải danh sách");
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        final error = json.decode(response.body)['error'] ?? 'Không tải được sản phẩm';
+        throw Exception(error);
+      }
+    } catch (e) {
+      print("Lỗi tải sản phẩm: $e");
+      throw Exception("Lỗi tải sản phẩm: $e");
+    }
+  }
+
   Future<List<Product>> loadPopularProducts() async {
     try {
       http.Response response = await http.get(Uri.parse("$uri/api/popular-products"), headers: <String, String>{

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vendor_store/provider/vendor_product_provider.dart';
 import '../global_variables.dart';
 import '../provider/vendor_provider.dart';
 import '../services/manage_http_response.dart';
@@ -78,6 +79,7 @@ class VendorAuthController {
           final userJson = jsonEncode(jsonDecode(response.body));
 
           ref.read(vendorProvider.notifier).setVendor(response.body);
+          ref.read(vendorProductProvider.notifier).clearProducts();
 
           await prefs.setString('user', userJson);
 
@@ -135,7 +137,7 @@ class VendorAuthController {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.remove('auth_token');
       await prefs.remove('vendor');
-      await prefs.remove('vendorId'); // 🔑 Xóa vendorId khi đăng xuất
+      await prefs.remove('vendorId');
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -149,7 +151,7 @@ class VendorAuthController {
     }
   }
 
-  // ✅ 5. Cập nhật địa chỉ người dùng
+  // ✅ 5. Cập nhật data vendor
   Future<void> updateVendorData({
     required BuildContext context,
     required String id,
@@ -186,7 +188,7 @@ class VendorAuthController {
       );
     } catch (e) {
       if (context.mounted) {
-        showSnackBar(context, "Lỗi cập nhật địa chỉ");
+        showSnackBar(context, "Lỗi cập nhật data: $e");
       }
     }
   }

@@ -25,6 +25,20 @@ productRouter.post('/api/add-products',async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
+  // API lấy tất cả sản phẩm
+productRouter.get('/api/products', async (req, res) => {
+    try {
+        const products = await Product.find();
+
+        if (!products || products.length === 0) {
+            return res.status(404).json({ msg: "Không tìm thấy sản phẩm nào!" });
+        }
+
+        return res.status(200).json(products);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
 
 productRouter.get('/api/popular-products',async(req, res)=>{
     try{

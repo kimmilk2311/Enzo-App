@@ -9,7 +9,8 @@ class CategoryProvider extends StateNotifier<CategoryState> {
   }
 
   Future<void> _loadCategories({bool forceRefresh = false}) async {
-    if (state.categories.isNotEmpty && !forceRefresh) {
+    // Kiểm tra nếu không cần tải lại và đã có danh mục
+    if (!forceRefresh && state.categories.isNotEmpty) {
       return;
     }
 
@@ -32,7 +33,9 @@ class CategoryProvider extends StateNotifier<CategoryState> {
   }
 
   Future<void> _loadSubCategories(String categoryName, {bool forceRefresh = false}) async {
-    if (state.subcategories.isNotEmpty && !forceRefresh && state.selectedCategory?.name == categoryName) {
+    if (state.subcategories.isNotEmpty &&
+        !forceRefresh &&
+        state.selectedCategory?.name == categoryName) {
       return;
     }
 
@@ -65,8 +68,9 @@ class CategoryProvider extends StateNotifier<CategoryState> {
     state = state.copyWith(categories: categories, isLoading: false, error: null);
   }
 
-  void selectCategory(Category category) {
+  void selectCategory(Category category) async {
     state = state.copyWith(selectedCategory: category);
+    await _loadSubCategories(category.name, forceRefresh: true);
   }
 }
 

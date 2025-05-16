@@ -27,6 +27,8 @@ class _EditProductDetailScreenState extends State<EditProductDetailScreen> {
   final ProductController _productController = ProductController();
   List<File>? pickedImages;
 
+  bool _isUpdating = false; // 👈 Thêm biến này
+
   @override
   void initState() {
     super.initState();
@@ -45,32 +47,45 @@ class _EditProductDetailScreenState extends State<EditProductDetailScreen> {
 
   Future<void> _updateProduct() async {
     if (_formKey.currentState!.validate()) {
-      List<String> uploadImages = pickedImages != null && pickedImages!.isNotEmpty
-          ? await _productController.uploadImagesToCloudinary(pickedImages, widget.product)
-          : widget.product.images;
-      final updateProduct = Product(
-        id: widget.product.id,
-        productName: productNameController.text,
-        productPrice: int.parse(productPriceController.text),
-        quantity: int.parse(quantityController.text),
-        description: descriptionController.text,
-        category: widget.product.category,
-        vendorId: widget.product.vendorId,
-        fullName: widget.product.fullName,
-        subCategory: widget.product.subCategory,
-        images: pickedImages != null && pickedImages!.isNotEmpty ? uploadImages : widget.product.images,
-        averageRating: widget.product.averageRating,
-        totalRatings: widget.product.totalRatings,
-      );
-      await _productController.updateProduct(
-        product: updateProduct,
-        pickedImages: pickedImages,
-        context: context,
-      );
+      setState(() {
+        _isUpdating = true; // 👈 Bắt đầu loading
+      });
+
+      try {
+        List<String> uploadImages = pickedImages != null && pickedImages!.isNotEmpty
+            ? await _productController.uploadImagesToCloudinary(pickedImages, widget.product)
+            : widget.product.images;
+
+        final updateProduct = Product(
+          id: widget.product.id,
+          productName: productNameController.text,
+          productPrice: int.parse(productPriceController.text),
+          quantity: int.parse(quantityController.text),
+          description: descriptionController.text,
+          category: widget.product.category,
+          vendorId: widget.product.vendorId,
+          fullName: widget.product.fullName,
+          subCategory: widget.product.subCategory,
+          images: uploadImages,
+          averageRating: widget.product.averageRating,
+          totalRatings: widget.product.totalRatings,
+        );
+
+        await _productController.updateProduct(
+          product: updateProduct,
+          pickedImages: pickedImages,
+          context: context,
+        );
+      } finally {
+        setState(() {
+          _isUpdating = false; // 👈 Kết thúc loading
+        });
+      }
     } else {
       print('Lỗi');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -186,6 +201,7 @@ class _EditProductDetailScreenState extends State<EditProductDetailScreen> {
                   text: "Cập nhật",
                   onPressed: _updateProduct,
                   color: AppColors.bluePrimary,
+                  isLoading: _isUpdating,
                 ),
               ],
             ),

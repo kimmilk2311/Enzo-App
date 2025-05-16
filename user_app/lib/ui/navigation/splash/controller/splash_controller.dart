@@ -20,7 +20,7 @@ class SplashController extends BaseController {
   }
 
   Future<void> navigateToHome() async {
-    Future.delayed(Duration(seconds: random(1, 2)), () async {
+    Future.delayed(Duration(seconds: random(2, 4)), () async {
       onNavigate();
     });
   }

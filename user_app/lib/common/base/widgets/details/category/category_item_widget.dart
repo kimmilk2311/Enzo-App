@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_store/provider/category_provider.dart';
 import 'package:multi_store/resource/theme/app_colors.dart';
 import 'package:multi_store/resource/theme/app_style.dart';
-import 'package:multi_store/common/base/widgets/details/category/inner_category_page.dart';
+import 'package:multi_store/common/base/widgets/details/category/inner_category_content_widget.dart';
 
 class CategoryItemWidget extends ConsumerStatefulWidget {
   const CategoryItemWidget({super.key});
@@ -34,7 +34,7 @@ class _CategoryItemWidgetState extends ConsumerState<CategoryItemWidget> {
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
-                const SizedBox(height: 12), // Đảm bảo đủ không gian để kéo
+                const SizedBox(height: 12),
                 categoryState.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : categoryState.error != null
@@ -42,11 +42,7 @@ class _CategoryItemWidgetState extends ConsumerState<CategoryItemWidget> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: AppColors.pink,
-                        size: 40,
-                      ),
+                      const Icon(Icons.error_outline, color: AppColors.pink, size: 40),
                       const SizedBox(height: 8),
                       Text(
                         categoryState.error!,
@@ -87,8 +83,7 @@ class _CategoryItemWidgetState extends ConsumerState<CategoryItemWidget> {
                               return GridView.builder(
                                 padding: const EdgeInsets.only(top: 15),
                                 itemCount: items.length,
-                                gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 4,
                                   crossAxisSpacing: 4,
                                   mainAxisSpacing: 4,
@@ -98,12 +93,19 @@ class _CategoryItemWidgetState extends ConsumerState<CategoryItemWidget> {
                                 itemBuilder: (context, index) {
                                   final category = items[index];
                                   return InkWell(
-                                    onTap: () {
+                                    onTap: () async {
+                                      final notifier = ref.read(categoryProvider.notifier);
+                                      notifier.selectCategory(category);
+                                      await notifier.refreshSubCategories(category.name);
+
+                                      if (!mounted) return;
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              InnerCategoryPage(category: category),
+                                          builder: (_) => InnerCategoryContentWidget(
+                                            category: category,
+                                          ),
                                         ),
                                       );
                                     },
@@ -116,8 +118,7 @@ class _CategoryItemWidgetState extends ConsumerState<CategoryItemWidget> {
                                             height: 47,
                                             width: 47,
                                             fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
+                                            errorBuilder: (context, error, stackTrace) {
                                               return const Icon(
                                                 Icons.broken_image,
                                                 size: 50,
@@ -131,8 +132,7 @@ class _CategoryItemWidgetState extends ConsumerState<CategoryItemWidget> {
                                           textAlign: TextAlign.center,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          style: AppStyles.STYLE_12.copyWith(
-                                              color: AppColors.blackFont),
+                                          style: AppStyles.STYLE_12.copyWith(color: AppColors.blackFont),
                                         ),
                                       ],
                                     ),
