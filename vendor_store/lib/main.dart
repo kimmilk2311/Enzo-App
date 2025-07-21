@@ -36,9 +36,8 @@ class MyApp extends ConsumerWidget {
           }
           final vendor = ref.watch(vendorProvider);
           return vendor!.token.isNotEmpty?const MainVendorPage():const LoginPage();
-        }),
+        }), 
       ),
     );
   }
 }
-

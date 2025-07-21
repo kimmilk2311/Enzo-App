@@ -38,9 +38,9 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
 
   void showEditProfileDialog(BuildContext context) {
     final user = ref.read(vendorProvider);
-    final TextEditingController _storeDescriptionController = TextEditingController();
+    final TextEditingController storeDescriptionController = TextEditingController();
 
-    _storeDescriptionController.text = user?.storeDescription ?? "";
+    storeDescriptionController.text = user?.storeDescription ?? "";
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -86,7 +86,7 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
                     labelText: "Mô tả cửa hàng",
                     border: OutlineInputBorder(),
                   ),
-                  controller: _storeDescriptionController,
+                  controller: storeDescriptionController,
                 ),
               ],
             ),
@@ -107,19 +107,19 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
                     id: ref.read(vendorProvider)!.id,
                     ref: ref,
                     storeImage: imageNotifier.value,
-                    storeDescription: _storeDescriptionController.text,
+                    storeDescription: storeDescriptionController.text,
                   );
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  "Lưu",
-                  style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.white),
-                ),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.bluePrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     )),
+                child: Text(
+                  "Lưu",
+                  style: AppStyles.STYLE_16_BOLD.copyWith(color: AppColors.white),
+                ),
               ),
             ],
           );
@@ -128,7 +128,7 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
 
   ImageProvider _buildUserImage(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
-      return AssetImage(AppImages.imgDefaultAvatar);
+      return const AssetImage(AppImages.imgDefaultAvatar);
     } else if (imagePath.startsWith('http')) {
       return NetworkImage(imagePath);
     } else {
@@ -136,7 +136,7 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
       if (file.existsSync()) {
         return FileImage(file);
       } else {
-        return AssetImage(AppImages.imgDefaultAvatar);
+        return const AssetImage(AppImages.imgDefaultAvatar);
       }
     }
   }
@@ -201,12 +201,12 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.edit),
-                  title: Text("Cập nhật thông tin", style: AppStyles.STYLE_14_BOLD),
+                  title: const Text("Cập nhật thông tin", style: AppStyles.STYLE_14_BOLD),
                   onTap: () => showEditProfileDialog(context),
                 ),
                 ListTile(
                   leading: const Icon(Icons.history),
-                  title: Text("Lịch sử đơn hàng", style: AppStyles.STYLE_14_BOLD),
+                  title: const Text("Lịch sử đơn hàng", style: AppStyles.STYLE_14_BOLD),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -216,7 +216,7 @@ class _VendorProfilePageState extends ConsumerState<VendorProfilePage> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.logout),
-                  title: Text("Đăng xuất", style: AppStyles.STYLE_14_BOLD),
+                  title: const Text("Đăng xuất", style: AppStyles.STYLE_14_BOLD),
                   onTap: () {
                     showDialog(
                       context: context,

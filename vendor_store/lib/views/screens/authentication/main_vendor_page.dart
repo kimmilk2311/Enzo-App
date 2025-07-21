@@ -17,7 +17,7 @@ class MainVendorPage extends StatefulWidget {
 
 class _MainVendorPageState extends State<MainVendorPage> {
   int _pageIndex = 0;
-  List<Widget> _pages = [
+  final List<Widget> _pages = [
    const EarningsPage(),
     const UploadPage(),
     const EditPage(),

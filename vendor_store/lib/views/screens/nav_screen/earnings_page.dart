@@ -46,7 +46,7 @@ class _EarningsPageState extends ConsumerState<EarningsPage> {
   }
   ImageProvider _buildUserImage(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
-      return AssetImage(AppImages.imgDefaultAvatar);
+      return const AssetImage(AppImages.imgDefaultAvatar);
     } else if (imagePath.startsWith('http')) {
       return NetworkImage(imagePath);
     } else {
@@ -54,7 +54,7 @@ class _EarningsPageState extends ConsumerState<EarningsPage> {
       if (file.existsSync()) {
         return FileImage(file);
       } else {
-        return AssetImage(AppImages.imgDefaultAvatar);
+        return const AssetImage(AppImages.imgDefaultAvatar);
       }
     }
   }
@@ -104,7 +104,7 @@ class _EarningsPageState extends ConsumerState<EarningsPage> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: _buildUserImage(vendor!.storeImage),
+                    backgroundImage: _buildUserImage(vendor.storeImage),
                   ),
                   const SizedBox(height: 15),
                   Text(

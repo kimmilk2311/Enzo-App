@@ -6,7 +6,7 @@ import 'package:vendor_store/provider/vendor_provider.dart';
 import 'package:vendor_store/views/screens/authentication/login_page.dart'; // Import trang đăng nhập
 
 class SignOutButton extends ConsumerWidget {
-  const SignOutButton({Key? key}) : super(key: key);
+  const SignOutButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

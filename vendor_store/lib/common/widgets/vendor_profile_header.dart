@@ -13,7 +13,7 @@ class VendorProfileHeader extends ConsumerWidget {
 
   ImageProvider _buildUserImage(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
-      return AssetImage(AppImages.imgDefaultAvatar);
+      return const AssetImage(AppImages.imgDefaultAvatar);
     } else if (imagePath.startsWith('http')) {
       return NetworkImage(imagePath);
     } else {

@@ -14,7 +14,7 @@ import '../ui/authentication/login/screen/login_page.dart';
 import '../ui/main/screen/main_page.dart';
 
 class AuthController {
-  // ✅ 2. Đăng ký người dùng
+  //  Đăng ký người dùng
   Future<void> signUpUsers({
     required BuildContext context,
     required String email,
@@ -61,7 +61,7 @@ class AuthController {
     }
   }
 
-  // ✅ 3. Đăng nhập người dùng
+  //  Đăng nhập người dùng
   Future<void> signInUsers({
     required BuildContext context,
     required String loginInput,
@@ -147,7 +147,7 @@ class AuthController {
     }
   }
 
-  // ✅ 1. Cập nhật thông tin user
+  // Cập nhật thông tin user
   Future<void> updateUserProfile({
     required BuildContext context,
     required WidgetRef ref,
@@ -197,7 +197,7 @@ class AuthController {
     }
   }
 
-  // ✅ 4. Đăng xuất người dùng
+  // Đăng xuất người dùng
   Future<void> signOutUser({
     required BuildContext context,
     required WidgetRef ref,

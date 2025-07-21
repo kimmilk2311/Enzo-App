@@ -51,7 +51,7 @@ class OrderController {
         Uri.parse("$uri/api/orders/$id"),
         headers: {
           "Content-Type": 'application/json; charset=UTF-8',
-          'x-auth-token': token!,
+          'x-auth-token': token,
         },
       );
 

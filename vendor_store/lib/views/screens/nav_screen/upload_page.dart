@@ -45,7 +45,7 @@ class _UploadPageState extends ConsumerState<UploadPage> {
 
   Future<void> chooseImage() async {
     final pickedFiles = await picker.pickMultiImage();
-    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+    if (pickedFiles.isNotEmpty) {
       setState(() {
         images.addAll(pickedFiles.map((pickedFile) => File(pickedFile.path)));
       });
